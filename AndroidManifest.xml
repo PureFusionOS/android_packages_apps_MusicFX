@@ -31,7 +31,8 @@
         android:icon="@drawable/icon"
         android:label="@string/eq_dialog_title"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme"
+        android:allowBackup="false">
         <activity
             android:name=".ActivityMusic" >
             <intent-filter>
