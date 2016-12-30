@@ -141,14 +141,14 @@ public class Visualizer extends LinearLayout {
 
     @Override
     protected void onSizeChanged(int w, int h, int oldW, int oldH) {
-        Log.d(TAG, "onSizeChanged w="+w+" oldW="+oldW);
-        Log.d(TAG, "onSizeChanged h="+h+" oldH="+oldH);
+        //Log.d(TAG, "onSizeChanged w="+w+" oldW="+oldW);
+        //Log.d(TAG, "onSizeChanged h="+h+" oldH="+oldH);
         mWidth = w;
         mHeight = h;
         // Calculate the height of each tile
         mBaseHeight = (mHeight - mTileBottom - mTVHeight - mTextBottom)
                 / (MAX_TILES * SPACE_RATIO + MAX_TILES - 1);
-        Log.d(TAG, "onSizeChanged mBaseHeight="+mBaseHeight+" mTVHeight="+mTVHeight);
+        //Log.d(TAG, "onSizeChanged mBaseHeight="+mBaseHeight+" mTVHeight="+mTVHeight);
         final LayoutParams params = new LayoutParams(
                 LayoutParams.WRAP_CONTENT, (int) (mHeight - mTVHeight - mTextBottom));
         mSB.setLayoutParams(params);
@@ -212,14 +212,14 @@ public class Visualizer extends LinearLayout {
     }
 
     public void setProgress(int progress) {
-        Log.d(TAG, "setProgress progress="+progress);
+        //Log.d(TAG, "setProgress progress="+progress);
         mProgress = progress;
         mSB.setProgress(progress);
         invalidate();
     }
 
     public void setShowSeekBar(boolean show) {
-        Log.d(TAG, "setShowSeekBar mEnabled="+mEnabled+" show="+show);
+        //Log.d(TAG, "setShowSeekBar mEnabled="+mEnabled+" show="+show);
         if (mEnabled || !show) {
             mShowSeekBar = show;
             mSB.setVisibility(show ? View.VISIBLE : View.INVISIBLE);

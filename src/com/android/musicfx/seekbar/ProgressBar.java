@@ -655,7 +655,7 @@ public class ProgressBar extends View {
     
     @android.view.RemotableViewMethod
     synchronized void setProgress(int progress, boolean fromUser) {
-        Log.d(TAG, "setProgress progress="+progress+" mIndeterminate="+mIndeterminate);
+        //Log.d(TAG, "setProgress progress="+progress+" mIndeterminate="+mIndeterminate);
         if (mIndeterminate) {
             return;
         }
@@ -765,7 +765,7 @@ public class ProgressBar extends View {
      */
     @android.view.RemotableViewMethod
     public synchronized void setMax(int max) {
-        Log.d(TAG, "setMax max="+max+" mMax="+mMax);
+        //Log.d(TAG, "setMax max="+max+" mMax="+mMax);
         if (max < 0) {
             max = 0;
         }
@@ -1017,7 +1017,7 @@ public class ProgressBar extends View {
     protected synchronized void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         Drawable d = mCurrentDrawable;
 
-        Log.d(TAG, "onMeasure widthMeasureSpec="+widthMeasureSpec+" heightMeasureSpec="+heightMeasureSpec);
+        //Log.d(TAG, "onMeasure widthMeasureSpec="+widthMeasureSpec+" heightMeasureSpec="+heightMeasureSpec);
         int dw = 0;
         int dh = 0;
         if (d != null) {
