@@ -37,12 +37,16 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     <com.android.musicfx.seekbar.SeekBar
         android:id="@+id/EQBandSeekBar"
-        style="@style/Widget.Holo.SeekBar.Vertical"
+        style="@style/Widget.Material.SeekBar.Vertical"
         android:layout_marginStart="@dimen/eq_slider_margin"
         android:layout_marginEnd="@dimen/eq_slider_margin"
         android:layout_width="48dp"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:visibility="invisible" />
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="10dp"/>
     <TextView
         android:id="@+id/EQBandTextView"
         android:layout_width="match_parent"

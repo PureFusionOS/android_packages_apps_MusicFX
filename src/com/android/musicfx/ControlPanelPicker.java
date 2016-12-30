@@ -44,8 +44,6 @@ import java.util.List;
  */
 public class ControlPanelPicker extends AlertActivity implements OnClickListener, OnPrepareListViewListener {
 
-    
-
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
