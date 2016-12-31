@@ -577,13 +577,7 @@ public class ControlPanelEffect {
         final SharedPreferences prefs = context.getSharedPreferences(GLOBAL_PREF_SCOPE,
                 Context.MODE_PRIVATE);
         prefs.edit().putBoolean(Key.global_enabled.toString(), value).commit();
-        for (Integer sessionId : new ArrayList<Integer>(mAudioSessions.keySet())) {
-            try {
-                Log.d(TAG, "setEnabled " + sessionId + " " + value);
-                mAudioSessions.get(sessionId).setEnabled(value);
-            } catch (Exception ex) {
-            }
-        }
+        updateDsp(context);
     }
 
     private static void updateEffectSet(SharedPreferences prefs, EffectSet effectSet) {
