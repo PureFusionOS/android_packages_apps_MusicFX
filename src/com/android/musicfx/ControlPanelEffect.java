@@ -577,7 +577,10 @@ public class ControlPanelEffect {
         final SharedPreferences prefs = context.getSharedPreferences(GLOBAL_PREF_SCOPE,
                 Context.MODE_PRIVATE);
         prefs.edit().putBoolean(Key.global_enabled.toString(), value).commit();
-        updateDsp(context);
+        final ControlMode controlMode = getControlMode();
+        if (controlMode == ControlMode.CONTROL_EFFECTS) {
+            updateDsp(context);
+        }
     }
 
     private static void updateEffectSet(SharedPreferences prefs, EffectSet effectSet) {
