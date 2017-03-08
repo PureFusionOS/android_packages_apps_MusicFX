@@ -617,7 +617,7 @@ public class ControlPanelEffect {
             short bandLevel = 0;
             if (eQPreset < numPresets) {
                 // OpenSL ES EQ Effect presets
-                bandLevel = mEQPresetOpenSLESBandLevel[preset][band];
+                bandLevel = mEQPresetOpenSLESBandLevel[eQPreset][band];
             } else {
                 // User
                 bandLevel = (short) prefs.getInt(
