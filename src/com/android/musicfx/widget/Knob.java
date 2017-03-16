@@ -100,7 +100,7 @@ public class Knob extends FrameLayout {
         int foreground;
         try {
             label = a.getString(R.styleable.Knob_label);
-            foreground = a.getResourceId(R.styleable.Knob_foreground, R.drawable.knob);
+            foreground = a.getResourceId(R.styleable.Knob_foregroundImage, R.drawable.knob);
         } finally {
             a.recycle();
         }
