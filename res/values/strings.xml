@@ -58,4 +58,10 @@
     <string name="picker_title">Music effects control panel"</string>
     <string name="toggle_button_on">On</string>
     <string name="toggle_button_off">Off</string>
+
+    <string name="drawer_item_speaker">Speaker</string>
+    <string name="drawer_item_headset">Headphones</string>
+    <string name="drawer_item_bluetooth">Bluetooth</string>
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
 </resources>

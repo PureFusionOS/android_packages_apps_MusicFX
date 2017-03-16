@@ -39,7 +39,12 @@ public class ControlPanelEffect {
 
     private final static String TAG = "MusicFXControlPanelEffect";
     public static final String GLOBAL_PREF_SCOPE = "com.android.musicfx";
+    public static final String SPEAKER_PREF_SCOPE = "com.android.musicfx.speaker";
+    public static final String HEADSET_PREF_SCOPE = "com.android.musicfx.headset";
+    public static final String BLUETOOTH_PREF_SCOPE = "com.android.musicfx.bluetooth";
+    public static final String PREF_SCOPE_CHANGED = "com.android.musicfx.PREF_SCOPE_CHANGED";
 
+    private static String[] ALL_PREF_SCOPES = new String[] {SPEAKER_PREF_SCOPE, HEADSET_PREF_SCOPE, BLUETOOTH_PREF_SCOPE};
     /**
      * Audio session priority
      */
@@ -68,7 +73,7 @@ public class ControlPanelEffect {
         eq_num_bands, eq_level_range, eq_center_freq, eq_band_level,
         eq_num_presets, eq_preset_name, eq_preset_user_band_level,
         eq_preset_user_band_level_default, eq_current_preset,
-        pr_enabled, pr_current_preset
+        pr_enabled, pr_current_preset, bluetooth, headset
     }
 
     protected static class EffectSet {
@@ -107,40 +112,6 @@ public class ControlPanelEffect {
             mBassBoost.setEnabled(value);
             mVirtualizer.setEnabled(value);
             mPresetReverb.setEnabled(value);
-        }
-
-        /**
-         * Proxies call to AudioEffect.setParameter(byte[], byte[]) which is
-         * available via reflection.
-         *
-         * @param audioEffect
-         * @param parameter
-         * @param value
-         */
-        private static void setParameter(AudioEffect audioEffect, int parameter, short value) {
-            try {
-                byte[] arguments = new byte[]{
-                        (byte) (parameter), (byte) (parameter >> 8),
-                        (byte) (parameter >> 16), (byte) (parameter >> 24)
-                };
-                byte[] result = new byte[]{
-                        (byte) (value), (byte) (value >> 8)
-                };
-
-                Method setParameter = AudioEffect.class.getMethod(
-                        "setParameter", byte[].class, byte[].class);
-                int returnValue = (Integer) setParameter.invoke(audioEffect,
-                        arguments, result);
-
-                if (returnValue != 0) {
-                    Log.e(TAG,
-                            String.format(
-                                    "Invalid argument error in setParameter(%d, (short) %d) == %d",
-                                    parameter, value, returnValue));
-                }
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
         }
     }
 
@@ -190,7 +161,8 @@ public class ControlPanelEffect {
      * @param context
      */
     public static void initEffectsPreferences(final Context context) {
-        final SharedPreferences prefs = context.getSharedPreferences(GLOBAL_PREF_SCOPE,
+        for (String prefLevel : ALL_PREF_SCOPES) {
+        final SharedPreferences prefs = context.getSharedPreferences(prefLevel,
                 Context.MODE_PRIVATE);
 
         Log.d(TAG, "initEffectsPreferences");
@@ -235,6 +207,7 @@ public class ControlPanelEffect {
         } catch (final RuntimeException e) {
             Log.e(TAG, "initEffectsPreferences: processingEnabled: " + e);
         }
+        }
     }
 
     /**
@@ -244,9 +217,9 @@ public class ControlPanelEffect {
      * @param key
      * @param value
      */
-    public static void setParameterBoolean(final Context context, final Key key, final boolean value) {
+    public static void setParameterBoolean(final Context context, final String prefLevel, final Key key, final boolean value) {
         try {
-            final SharedPreferences prefs = context.getSharedPreferences(GLOBAL_PREF_SCOPE,
+            final SharedPreferences prefs = context.getSharedPreferences(prefLevel,
                     Context.MODE_PRIVATE);
             final ControlMode controlMode = getControlMode();
             final SharedPreferences.Editor editor = prefs.edit();
@@ -254,7 +227,13 @@ public class ControlPanelEffect {
             editor.commit();
 
             if (controlMode == ControlMode.CONTROL_EFFECTS) {
-                updateDsp(context);
+                String newPrefLevel = prefLevel;
+                // if current active level has changed make sure to updateDsp for the
+                // now active level
+                if (key.equals(Key.bluetooth) || key.equals(Key.headset)) {
+                    newPrefLevel = getCurrentPrevLevel(context);
+                }
+                updateDsp(context, newPrefLevel);
             }
         } catch (final RuntimeException e) {
             Log.e(TAG, "setParameterBoolean: " + key + "; " + value + "; " + e);
@@ -268,8 +247,8 @@ public class ControlPanelEffect {
      * @param key
      * @return parameter value
      */
-    public static Boolean getParameterBoolean(final Context context, final Key key) {
-        final SharedPreferences prefs = context.getSharedPreferences(GLOBAL_PREF_SCOPE,
+    public static Boolean getParameterBoolean(final Context context, final String prefLevel, final Key key) {
+        final SharedPreferences prefs = context.getSharedPreferences(prefLevel,
                 Context.MODE_PRIVATE);
         boolean value = false;
 
@@ -291,13 +270,13 @@ public class ControlPanelEffect {
      * @param arg0
      * @param arg1
      */
-    public static void setParameterInt(final Context context, final Key key, final int arg0,
+    public static void setParameterInt(final Context context, final String prefLevel, final Key key, final int arg0,
             final int arg1) {
         String strKey = key.toString();
         int value = arg0;
 
         try {
-            final SharedPreferences prefs = context.getSharedPreferences(GLOBAL_PREF_SCOPE,
+            final SharedPreferences prefs = context.getSharedPreferences(prefLevel,
                     Context.MODE_PRIVATE);
             final SharedPreferences.Editor editor = prefs.edit();
             final ControlMode controlMode = getControlMode();
@@ -353,7 +332,7 @@ public class ControlPanelEffect {
             editor.apply();
 
             if (controlMode == ControlMode.CONTROL_EFFECTS) {
-                updateDsp(context);
+                updateDsp(context, prefLevel);
             }
         } catch (final RuntimeException e) {
             Log.e(TAG, "setParameterInt: " + key + "; " + arg0 + "; " + arg1 + "; " + e);
@@ -368,8 +347,8 @@ public class ControlPanelEffect {
      * @param key
      * @param arg
      */
-    public static void setParameterInt(final Context context, final Key key, final int arg) {
-        setParameterInt(context, key, arg, DUMMY_ARGUMENT);
+    public static void setParameterInt(final Context context, final String prefLevel, final Key key, final int arg) {
+        setParameterInt(context, prefLevel, key, arg, DUMMY_ARGUMENT);
     }
 
     /**
@@ -379,11 +358,11 @@ public class ControlPanelEffect {
      * @param key
      * @return parameter value
      */
-    public static int getParameterInt(final Context context, final String key) {
+    public static int getParameterInt(final Context context, final String prefLevel, final String key) {
         int value = 0;
 
         try {
-            final SharedPreferences prefs = context.getSharedPreferences(GLOBAL_PREF_SCOPE,
+            final SharedPreferences prefs = context.getSharedPreferences(prefLevel,
                     Context.MODE_PRIVATE);
             value = prefs.getInt(key, value);
         } catch (final RuntimeException e) {
@@ -400,8 +379,8 @@ public class ControlPanelEffect {
      * @param key
      * @return parameter value
      */
-    public static int getParameterInt(final Context context, final Key key) {
-        return getParameterInt(context, key.toString());
+    public static int getParameterInt(final Context context, final String prefLevel, final Key key) {
+        return getParameterInt(context, prefLevel, key.toString());
     }
 
     /**
@@ -412,8 +391,8 @@ public class ControlPanelEffect {
      * @param arg
      * @return parameter value
      */
-    public static int getParameterInt(final Context context, final Key key, final int arg) {
-        return getParameterInt(context, key.toString() + arg);
+    public static int getParameterInt(final Context context, final String prefLevel, final Key key, final int arg) {
+        return getParameterInt(context, prefLevel, key.toString() + arg);
     }
 
     /**
@@ -425,9 +404,9 @@ public class ControlPanelEffect {
      * @param arg1
      * @return parameter value
      */
-    public static int getParameterInt(final Context context, final Key key, final int arg0,
+    public static int getParameterInt(final Context context, final String prefLevel, final Key key, final int arg0,
             final int arg1) {
-        return getParameterInt(context, key.toString() + arg0 + "_"
+        return getParameterInt(context, prefLevel, key.toString() + arg0 + "_"
                 + arg1);
     }
 
@@ -438,8 +417,8 @@ public class ControlPanelEffect {
      * @param key
      * @return parameter value array
      */
-    public static int[] getParameterIntArray(final Context context, final Key key) {
-        final SharedPreferences prefs = context.getSharedPreferences(GLOBAL_PREF_SCOPE,
+    public static int[] getParameterIntArray(final Context context, final String prefLevel, final Key key) {
+        final SharedPreferences prefs = context.getSharedPreferences(prefLevel,
                 Context.MODE_PRIVATE);
 
         int[] intArray = null;
@@ -483,10 +462,10 @@ public class ControlPanelEffect {
      * @param key
      * @return parameter value
      */
-    public static String getParameterString(final Context context, final String key) {
+    public static String getParameterString(final Context context, final String prefLevel, final String key) {
         String value = "";
         try {
-            final SharedPreferences prefs = context.getSharedPreferences(GLOBAL_PREF_SCOPE,
+            final SharedPreferences prefs = context.getSharedPreferences(prefLevel,
                     Context.MODE_PRIVATE);
 
             // Get effect parameters
@@ -506,8 +485,8 @@ public class ControlPanelEffect {
      * @param key
      * @return parameter value
      */
-    public static String getParameterString(final Context context, final Key key) {
-        return getParameterString(context, key.toString());
+    public static String getParameterString(final Context context, final String prefLevel, final Key key) {
+        return getParameterString(context, prefLevel, key.toString());
     }
 
     /**
@@ -517,8 +496,8 @@ public class ControlPanelEffect {
      * @param args
      * @return parameter value
      */
-    public static String getParameterString(final Context context, final Key key, final int arg) {
-        return getParameterString(context, key.toString() + arg);
+    public static String getParameterString(final Context context, final String prefLevel, final Key key, final int arg) {
+        return getParameterString(context, prefLevel, key.toString() + arg);
     }
 
     public static ControlMode getControlMode() {
@@ -526,6 +505,20 @@ public class ControlPanelEffect {
             return ControlMode.CONTROL_PREFERENCES;
         }
         return ControlMode.CONTROL_EFFECTS;
+    }
+
+    public static String getCurrentPrevLevel(Context context) {
+        boolean useBluetooth = ControlPanelEffect.getParameterBoolean(context,
+                    ControlPanelEffect.GLOBAL_PREF_SCOPE, ControlPanelEffect.Key.bluetooth);
+        boolean useHeadset = ControlPanelEffect.getParameterBoolean(context,
+                    ControlPanelEffect.GLOBAL_PREF_SCOPE, ControlPanelEffect.Key.headset);
+        if (useBluetooth) {
+            return BLUETOOTH_PREF_SCOPE;
+        }
+        if (useHeadset) {
+            return HEADSET_PREF_SCOPE;
+        }
+        return SPEAKER_PREF_SCOPE;
     }
 
     /**
@@ -550,7 +543,10 @@ public class ControlPanelEffect {
         } else {
             return;
         }
-        final SharedPreferences prefs = context.getSharedPreferences(GLOBAL_PREF_SCOPE,
+
+        String currentLevel = getCurrentPrevLevel(context);
+        Log.d(TAG, "openSession scope = " + currentLevel);
+        final SharedPreferences prefs = context.getSharedPreferences(currentLevel,
                 Context.MODE_PRIVATE);
 
         updateEffectSet(prefs, effectSet);
@@ -573,13 +569,13 @@ public class ControlPanelEffect {
         }
     }
 
-    public static void setEnabled(Context context, boolean value) {
-        final SharedPreferences prefs = context.getSharedPreferences(GLOBAL_PREF_SCOPE,
+    public static void setEnabled(Context context, final String prefLevel, boolean value) {
+        final SharedPreferences prefs = context.getSharedPreferences(prefLevel,
                 Context.MODE_PRIVATE);
         prefs.edit().putBoolean(Key.global_enabled.toString(), value).commit();
         final ControlMode controlMode = getControlMode();
         if (controlMode == ControlMode.CONTROL_EFFECTS) {
-            updateDsp(context);
+            updateDsp(context, prefLevel);
         }
     }
 
@@ -630,10 +626,15 @@ public class ControlPanelEffect {
         effectSet.mEqualizer.setEnabled(isGlobalEnabled && eqOn);
     }
 
-    private static void updateDsp(Context context) {
-        final SharedPreferences prefs = context.getSharedPreferences(GLOBAL_PREF_SCOPE,
+    private static void updateDsp(Context context, final String prefLevel) {
+        final String currentLevel = getCurrentPrevLevel(context);
+
+        if (!prefLevel.equals(currentLevel)) {
+            return;
+        }
+        final SharedPreferences prefs = context.getSharedPreferences(prefLevel,
                 Context.MODE_PRIVATE);
-        Log.d(TAG, "updateDsp " + prefs.getAll());
+        Log.d(TAG, "updateDsp for level = " + prefLevel + ":" + prefs.getAll());
         for (Integer sessionId : new ArrayList<Integer>(mAudioSessions.keySet())) {
             EffectSet effectSet = mAudioSessions.get(sessionId);
             updateEffectSet(prefs, effectSet);
@@ -670,12 +671,14 @@ public class ControlPanelEffect {
                 }
 
                 virtualizerEffect = new Virtualizer(PRIORITY, session);
-                final SharedPreferences prefs = context.getSharedPreferences(GLOBAL_PREF_SCOPE,
-                        Context.MODE_PRIVATE);
-                final SharedPreferences.Editor editor = prefs.edit();
-                editor.putBoolean(Key.virt_strength_supported.toString(),
-                        virtualizerEffect.getStrengthSupported());
-                editor.commit();
+                for (String prefLevel : ALL_PREF_SCOPES) {
+                    final SharedPreferences prefs = context.getSharedPreferences(prefLevel,
+                            Context.MODE_PRIVATE);
+                    final SharedPreferences.Editor editor = prefs.edit();
+                    editor.putBoolean(Key.virt_strength_supported.toString(),
+                            virtualizerEffect.getStrengthSupported());
+                    editor.commit();
+                }
 
                 mIsInitialized = true;
             } catch (final IllegalStateException e) {
