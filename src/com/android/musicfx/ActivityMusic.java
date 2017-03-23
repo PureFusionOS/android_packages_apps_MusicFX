@@ -46,6 +46,7 @@ import android.media.AudioManager;
 import android.media.audiofx.AudioEffect;
 import android.media.audiofx.AudioEffect.Descriptor;
 import android.os.Bundle;
+import android.os.SystemProperties;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -479,8 +480,10 @@ public class ActivityMusic extends AppCompatActivity {
                 || (mPresetReverbSupported)) {
 
             if (!isServiceRunning()) {
-                Log.d(TAG, "starting SystemService from onResume");
-                startService(new Intent(this, SystemService.class));
+                if (!SystemProperties.getBoolean("ro.musicfx.disabled", false)) {
+                    Log.d(TAG, "starting SystemService from onResume");
+                    startService(new Intent(this, SystemService.class));
+                }
             }
             mCurrentLevel = ControlPanelEffect.getCurrentPrevLevel(this);
             mIsHeadsetOn = mCurrentLevel.equals(ControlPanelEffect.HEADSET_PREF_SCOPE);

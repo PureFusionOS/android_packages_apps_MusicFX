@@ -15,10 +15,13 @@ package com.android.musicfx;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.SystemProperties;
 
 public class BootCompletedReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        context.startService(new Intent(context, SystemService.class));
+        if (!SystemProperties.getBoolean("ro.musicfx.disabled", false)) {
+            context.startService(new Intent(context, SystemService.class));
+        }
     }
 }
