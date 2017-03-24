@@ -95,8 +95,8 @@
                     android:id="@+id/eqPresets"
                     android:layout_width="match_parent"
                     android:layout_height="40dip"
-                    android:background="#ffffff"
-                    android:fadingEdgeLength="70dip"
+                    android:background="@android:color/white"
+                    android:fadingEdgeLength="50dip"
                     android:gravity="center_vertical"
                     android:padding="0dip"
                     android:requiresFadingEdge="horizontal" />
@@ -176,13 +176,39 @@
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:paddingStart="50dp"
+                        android:paddingStart="20dp"
                         android:layout_weight="1"
                         android:text="@string/pr_title"
                         android:textColor="@android:color/black" />
 
                     <Spinner
                         android:id="@+id/prSpinner"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textColor="@android:color/black" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/swSpinnerContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    android:layout_gravity="bottom"
+                    android:orientation="horizontal"
+                    android:background="@android:color/white" >
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="20dp"
+                        android:layout_weight="1"
+                        android:text="@string/sw_title"
+                        android:textColor="@android:color/black" />
+
+                    <Spinner
+                        android:id="@+id/swSpinner"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
