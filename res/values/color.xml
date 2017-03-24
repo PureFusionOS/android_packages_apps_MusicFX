@@ -15,7 +15,6 @@
 -->
 
 <resources>
-
     <color name="primaryColor">#ff263238</color> <!--material_grey_900-->
     <color name="primaryColorDark">#ff14171a</color> <!--dark grey-->
     <color name="accentColor">#7cc6bf</color> <!--material teal-->

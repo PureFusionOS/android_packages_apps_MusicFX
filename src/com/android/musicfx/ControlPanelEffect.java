@@ -23,6 +23,7 @@ import android.media.audiofx.AudioEffect;
 import android.media.audiofx.BassBoost;
 import android.media.audiofx.Equalizer;
 import android.media.audiofx.PresetReverb;
+import android.media.audiofx.StereoWide;
 import android.media.audiofx.Virtualizer;
 import android.util.Log;
 
@@ -73,7 +74,8 @@ public class ControlPanelEffect {
         eq_num_bands, eq_level_range, eq_center_freq, eq_band_level,
         eq_num_presets, eq_preset_name, eq_preset_user_band_level,
         eq_preset_user_band_level_default, eq_current_preset,
-        pr_enabled, pr_current_preset, bluetooth, headset
+        pr_enabled, pr_current_preset, sw_enabled, sw_strength,
+        bluetooth, headset
     }
 
     protected static class EffectSet {
@@ -82,6 +84,7 @@ public class ControlPanelEffect {
         final BassBoost mBassBoost;
         final Virtualizer mVirtualizer;
         final PresetReverb mPresetReverb;
+        StereoWide mStereoWide;
         int mAudioSession;
 
         protected EffectSet(int sessionId) {
@@ -90,6 +93,11 @@ public class ControlPanelEffect {
             mBassBoost = new BassBoost(0, sessionId);
             mVirtualizer = new Virtualizer(0, sessionId);
             mPresetReverb = new PresetReverb(0, sessionId);
+            try {
+                mStereoWide = new StereoWide(0, sessionId);
+            } catch(java.lang.IllegalArgumentException e) {
+                mStereoWide = null;
+            }
         }
 
         protected void release() {
@@ -97,36 +105,24 @@ public class ControlPanelEffect {
             mBassBoost.release();
             mVirtualizer.release();
             mPresetReverb.release();
-        }
-
-        protected void apply(Equalizer e) {
-            mEqualizer.setProperties(e.getProperties());
-        }
-
-        protected void apply(PresetReverb p) {
-            mPresetReverb.setProperties(p.getProperties());
-        }
-
-        protected void setEnabled(boolean value) {
-            mEqualizer.setEnabled(value);
-            mBassBoost.setEnabled(value);
-            mVirtualizer.setEnabled(value);
-            mPresetReverb.setEnabled(value);
+            if (mStereoWide != null) {
+                mStereoWide.release();
+            }
         }
     }
 
     protected static final Map<Integer, EffectSet> mAudioSessions = new HashMap<Integer, EffectSet>();
 
     // Defaults
-    final static boolean GLOBAL_ENABLED_DEFAULT = false;
-    private final static boolean VIRTUALIZER_ENABLED_DEFAULT = true;
+    private final static boolean GLOBAL_ENABLED_DEFAULT = false;
+    private final static boolean VIRTUALIZER_ENABLED_DEFAULT = false;
     private final static int VIRTUALIZER_STRENGTH_DEFAULT = 0;
-    private final static boolean BASS_BOOST_ENABLED_DEFAULT = true;
+    private final static boolean BASS_BOOST_ENABLED_DEFAULT = false;
     private final static int BASS_BOOST_STRENGTH_DEFAULT = 667;
-    private final static boolean PRESET_REVERB_ENABLED_DEFAULT = true;
+    private final static boolean PRESET_REVERB_ENABLED_DEFAULT = false;
     private final static int PRESET_REVERB_CURRENT_PRESET_DEFAULT = 0; // None
-    private static int mPrevBassBoostStrength = 0;
-    private static int mPrevVirtStrength = 0;
+    private final static boolean STERO_WIDE_ENABLED_DEFAULT = false;
+    private final static int STERO_WIDE_STRENGTH_DEFAULT = 0; // None
 
     // EQ defaults
     private final static boolean EQUALIZER_ENABLED_DEFAULT = true;
@@ -624,6 +620,14 @@ public class ControlPanelEffect {
         }
         boolean eqOn = prefs.getBoolean(Key.eq_enabled.toString(), EQUALIZER_ENABLED_DEFAULT);
         effectSet.mEqualizer.setEnabled(isGlobalEnabled && eqOn);
+
+        if (effectSet.mStereoWide != null) {
+            final int swStrength = prefs.getInt(Key.sw_strength.toString(),
+                    STERO_WIDE_STRENGTH_DEFAULT);
+            effectSet.mStereoWide.setStrength((short) (swStrength - 1));
+            boolean swOn = prefs.getBoolean(Key.sw_enabled.toString(), STERO_WIDE_ENABLED_DEFAULT);
+            effectSet.mStereoWide.setEnabled(isGlobalEnabled && swOn);
+        }
     }
 
     private static void updateDsp(Context context, final String prefLevel) {

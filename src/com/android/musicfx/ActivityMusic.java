@@ -41,6 +41,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.media.AudioFormat;
 import android.media.AudioManager;
@@ -121,6 +122,7 @@ public class ActivityMusic extends AppCompatActivity {
      * Indicates if Preset Reverb effect is supported.
      */
     private boolean mPresetReverbSupported;
+    private boolean mStereoWideSupported;
 
     // Equalizer fields
     private final Visualizer[] mEqualizerVisualizer = new Visualizer[EQUALIZER_MAX_BANDS];
@@ -128,12 +130,23 @@ public class ActivityMusic extends AppCompatActivity {
     private int mEqualizerMinBandLevel;
     private int mEQPresetUserPos = 1;
     private int mEQPreset;
+    private int mEQPresetPrevious;
     private int[] mEQPresetUserBandLevelsPrev;
     private String[] mEQPresetNames;
     private String[] mReverbPresetNames;
+    private String[] mSWStrengthNames;
 
     private int mPRPreset;
     private int mPRPresetPrevious;
+    private Spinner mPRPresetSpinner;
+    private int mSWStrength;
+    private int mSWStrengthPrevious;
+    private Spinner mSWStrengthSpinner;
+
+    private boolean mPRPresetSpinnerInit;
+    private boolean mSWStrengthSpinnerInit;
+    private ArrayAdapter<String> mSWStrengthAdapter;
+    private ArrayAdapter<String> mPRPresetAdapter;
 
     private boolean mIsHeadsetOn = false;
     private boolean mIsSpeakerOn = false;
@@ -150,6 +163,8 @@ public class ActivityMusic extends AppCompatActivity {
     private Switch mToolbarSwitch;
     private ViewGroup mViewGroup;
     private Gallery mGallery;
+    private int mHighlightColor;
+    private int mTextColor;
 
     /**
      * Array containing RSid of preset reverb names.
@@ -170,8 +185,8 @@ public class ActivityMusic extends AppCompatActivity {
             final String action = intent.getAction();
             if (action.equals(ControlPanelEffect.PREF_SCOPE_CHANGED)) {
                 Log.i(TAG, "onReceive " + action);
-                if ((mVirtualizerSupported) || (mBassBoostSupported) || (mEqualizerSupported)
-                        || (mPresetReverbSupported)) {
+                if (mVirtualizerSupported || mBassBoostSupported || mEqualizerSupported
+                        || mPresetReverbSupported || mStereoWideSupported) {
                     String currentLevel = ControlPanelEffect.getCurrentPrevLevel(ActivityMusic.this);
                     updateCurrentLevelInfo(currentLevel);
                 }
@@ -215,6 +230,8 @@ public class ActivityMusic extends AppCompatActivity {
                 mEqualizerSupported = true;
             } else if (effect.type.equals(AudioEffect.EFFECT_TYPE_PRESET_REVERB)) {
                 mPresetReverbSupported = true;
+            } else if (effect.type.equals(AudioEffect.EFFECT_TYPE_STEREOWIDE)) {
+                mStereoWideSupported = true;
             }
         }
 
@@ -224,6 +241,8 @@ public class ActivityMusic extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         mViewGroup = (ViewGroup) findViewById(R.id.contentSoundEffects);
+        mHighlightColor = getResources().getColor(R.color.highlight_gallery_text);
+        mTextColor = getResources().getColor(R.color.textColor);
 
         // Fill array with presets from AudioEffects call.
         // allocate a space for 1 extra strings (User)
@@ -243,13 +262,14 @@ public class ActivityMusic extends AppCompatActivity {
         for (short i = 0; i < mReverbPresetRSids.length; ++i) {
             mReverbPresetNames[i] = getString(mReverbPresetRSids[i]);
         }
+        mSWStrengthNames = getResources().getStringArray(R.array.stereowide_modes);
+
         mCurrentLevelText = (TextView)findViewById(R.id.switchstatus);
-        mCurrentLevelText.setCompoundDrawableTintList(new ColorStateList(new int[][] { new int[0] },
-                new int[] { getResources().getColor(R.color.current_out_source_color) }));
+        mCurrentLevelText.setCompoundDrawableTintList(new ColorStateList(new int[][] { new int[0] }, new int[] { getResources().getColor(R.color.current_out_source_color) }));
 
         // Watch for button clicks and initialization.
-        if ((mVirtualizerSupported) || (mBassBoostSupported) || (mEqualizerSupported)
-                || (mPresetReverbSupported)) {
+        if (mVirtualizerSupported || mBassBoostSupported || mEqualizerSupported
+                || mPresetReverbSupported || mStereoWideSupported) {
             // Initialize the Virtualizer elements.
             // Set the SeekBar listener.
             if (mVirtualizerSupported) {
@@ -315,19 +335,31 @@ public class ActivityMusic extends AppCompatActivity {
                 if (mEQPreset >= mEQPresetNames.length) {
                     mEQPreset = 0;
                 }
-                equalizerPresetsInit();
+                mEQPresetPrevious = mEQPreset;
                 equalizerBandsInit((LinearLayout)findViewById(R.id.eqcontainer));
+                equalizerPresetsInit();
             }
 
             // Initialize the Preset Reverb elements.
             // Set Spinner listeners.
+            mPRPresetSpinner = (Spinner) findViewById(R.id.prSpinner);
             if (mPresetReverbSupported) {
                 mPRPreset = ControlPanelEffect.getParameterInt(mContext, mCurrentLevel,
                         ControlPanelEffect.Key.pr_current_preset);
                 mPRPresetPrevious = mPRPreset;
-                reverbSpinnerInit((Spinner)findViewById(R.id.prSpinner));
+                reverbSpinnerInit();
             }
 
+            View spSpinnerContainer = findViewById(R.id.swSpinnerContainer);
+            mSWStrengthSpinner = (Spinner)findViewById(R.id.swSpinner);
+            if (mStereoWideSupported) {
+                mSWStrength = ControlPanelEffect.getParameterInt(mContext, mCurrentLevel,
+                        ControlPanelEffect.Key.sw_strength);
+                mSWStrengthPrevious = mSWStrength;
+                stereoWideSpinnerInit();
+            } else {
+                spSpinnerContainer.setVisibility(View.GONE);
+            }
         } else {
             mViewGroup.setVisibility(View.GONE);
             ((TextView) findViewById(R.id.noEffectsTextView)).setVisibility(View.VISIBLE);
@@ -468,14 +500,13 @@ public class ActivityMusic extends AppCompatActivity {
     /*
      * (non-Javadoc)
      *            // Update UI
-
      * @see android.app.Activity#onResume()
      */
     @Override
     protected void onResume() {
         super.onResume();
-        if ((mVirtualizerSupported) || (mBassBoostSupported) || (mEqualizerSupported)
-                || (mPresetReverbSupported)) {
+        if (mVirtualizerSupported || mBassBoostSupported || mEqualizerSupported
+                || mPresetReverbSupported || mStereoWideSupported) {
 
             if (!isServiceRunning()) {
                 if (!SystemProperties.getBoolean("ro.musicfx.disabled", false)) {
@@ -512,16 +543,39 @@ public class ActivityMusic extends AppCompatActivity {
         }
     }
 
-    private void reverbSpinnerInit(Spinner spinner) {
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                R.layout.spinner_item, mReverbPresetNames);
-        spinner.setAdapter(adapter);
-        spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+    private void reverbSpinnerInit() {
+        mPRPresetAdapter = new ArrayAdapter<String>(this, R.layout.spinner_item, mReverbPresetNames) {
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View item = super.getView(position, convertView, parent);
+                if (position == mPRPreset && position != 0 && mPRPresetSpinner.isEnabled()) {
+                    ((TextView) item.findViewById(android.R.id.text1)).setTextColor(mHighlightColor);
+                } else {
+                    ((TextView) item.findViewById(android.R.id.text1)).setTextColor(mTextColor);
+                }
+                return item;
+            }
+        };
+        mPRPresetSpinner.setAdapter(mPRPresetAdapter);
+        mPRPresetSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (!mPRPresetSpinnerInit) {
+                    mPRPresetSpinnerInit = true;
+                    return;
+                }
                 if (position != mPRPresetPrevious) {
+                    mPRPreset = position;
                     presetReverbSetPreset(position);
+                    TextView tv = (TextView) parent.getChildAt(0);
+                    if (tv != null) {
+                        if (position != 0 && mPRPresetSpinner.isEnabled()) {
+                            tv.setTextColor(mHighlightColor);
+                        } else {
+                            tv.setTextColor(mTextColor);
+                        }
+                    }
                 }
                 mPRPresetPrevious = position;
             }
@@ -530,8 +584,53 @@ public class ActivityMusic extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-        spinner.setSelection(mPRPreset);
-        spinner.setBackgroundResource(R.drawable.rev_spinner);
+        mPRPresetSpinner.setSelection(mPRPreset);
+        mPRPresetSpinner.setBackgroundResource(R.drawable.rev_spinner);
+    }
+
+    private void stereoWideSpinnerInit() {
+        mSWStrengthAdapter = new ArrayAdapter<String>(this, R.layout.spinner_item, mSWStrengthNames) {
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View item = super.getView(position, convertView, parent);
+                if (position == mSWStrength && position != 0 && mSWStrengthSpinner.isEnabled()) {
+                    ((TextView) item.findViewById(android.R.id.text1)).setTextColor(mHighlightColor);
+                } else {
+                    ((TextView) item.findViewById(android.R.id.text1)).setTextColor(mTextColor);
+                }
+                return item;
+            }
+        };
+        mSWStrengthSpinner.setAdapter(mSWStrengthAdapter);
+        mSWStrengthSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (!mSWStrengthSpinnerInit) {
+                    mSWStrengthSpinnerInit = true;
+                    return;
+                }
+                if (position != mSWStrengthPrevious) {
+                    mSWStrength = position;
+                    stereoWideSetStrength(position);
+                    TextView tv = (TextView) parent.getChildAt(0);
+                    if (tv != null) {
+                        if (position != 0 && mSWStrengthSpinner.isEnabled()) {
+                            tv.setTextColor(mHighlightColor);
+                        } else {
+                            tv.setTextColor(mTextColor);
+                        }
+                    }
+                }
+                mSWStrengthPrevious = position;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+        mSWStrengthSpinner.setSelection(mSWStrength);
+        mSWStrengthSpinner.setBackgroundResource(R.drawable.rev_spinner);
     }
 
     private void equalizerPresetsInit() {
@@ -542,12 +641,18 @@ public class ActivityMusic extends AppCompatActivity {
         mGallery.setOnItemSelectedListener(new Gallery.OnItemSelectedListener() {
             @Override
             public void onItemSelected(int position) {
-                mEQPreset = position;
-                showSeekBar(position == mEQPresetUserPos);
-                equalizerSetPreset(position);
+                if (position != mEQPresetPrevious) {
+                    mEQPreset = position;
+                    showSeekBar(position == mEQPresetUserPos);
+                    equalizerSetPreset(position);
+                    equalizerUpdateDisplay();
+                }
+                mEQPresetPrevious = position;
             }
         });
         mGallery.setSelection(mEQPreset);
+        showSeekBar(mEQPreset == mEQPresetUserPos);
+        equalizerUpdateDisplay();
     }
 
 
@@ -587,6 +692,12 @@ public class ActivityMusic extends AppCompatActivity {
                 view.setEnabled(enabled);
             }
         }
+        if (mPRPresetAdapter != null) {
+            mPRPresetAdapter.notifyDataSetChanged();
+        }
+        if (mSWStrengthAdapter != null) {
+            mSWStrengthAdapter.notifyDataSetChanged();
+        }
     }
 
     /**
@@ -598,10 +709,8 @@ public class ActivityMusic extends AppCompatActivity {
         }
         final boolean isEnabled = ControlPanelEffect.getParameterBoolean(mContext, mCurrentLevel,
                 ControlPanelEffect.Key.global_enabled);
-        //mToggleSwitch.setChecked(isEnabled);
-        //mCurrentLevelText.setText(isEnabled? R.string.toggle_button_on : R.string.toggle_button_off);
         mToolbarSwitch.setChecked(isEnabled);
-        setEnabledAllChildren((ViewGroup) findViewById(R.id.contentSoundEffects), isEnabled);
+        setEnabledAllChildren(mViewGroup, isEnabled);
         updateUIHeadset(false);
 
         if (mVirtualizerSupported) {
@@ -622,21 +731,28 @@ public class ActivityMusic extends AppCompatActivity {
                             ControlPanelEffect.Key.bb_strength));
         }
         if (mEqualizerSupported) {
-            equalizerUpdateDisplay();
+            mEQPreset = ControlPanelEffect.getParameterInt(mContext, mCurrentLevel,
+                ControlPanelEffect.Key.eq_current_preset);
+            if (mEQPreset >= mEQPresetNames.length) {
+                mEQPreset = 0;
+            }
+            mGallery.setSelection(mEQPreset);
         }
         if (mPresetReverbSupported) {
-            mPRPreset = ControlPanelEffect.getParameterInt(
-                                    mContext, mCurrentLevel,
-                                    ControlPanelEffect.Key.pr_current_preset);
-            ((Spinner)findViewById(R.id.prSpinner)).setSelection(mPRPreset);
+            mPRPreset = ControlPanelEffect.getParameterInt(mContext, mCurrentLevel,
+                    ControlPanelEffect.Key.pr_current_preset);
+            mPRPresetSpinner.setSelection(mPRPreset);
         }
-
+        if (mStereoWideSupported) {
+            mSWStrength = ControlPanelEffect.getParameterInt(mContext, mCurrentLevel,
+                    ControlPanelEffect.Key.sw_strength);
+            mSWStrengthSpinner.setSelection(mSWStrength);
+        }
         setInterception(isEnabled);
     }
 
     private void setInterception(boolean isEnabled) {
-        final InterceptableLinearLayout ill =
-            (InterceptableLinearLayout) findViewById(R.id.contentSoundEffects);
+        final InterceptableLinearLayout ill = (InterceptableLinearLayout) mViewGroup;
         ill.setInterception(!isEnabled);
         if (isEnabled) {
             ill.setOnClickListener(null);
@@ -651,7 +767,6 @@ public class ActivityMusic extends AppCompatActivity {
                 }
             });
         }
-        ill.setBackgroundResource(R.drawable.knobs_area);
     }
 
     /**
@@ -765,7 +880,6 @@ public class ActivityMusic extends AppCompatActivity {
         tv.setText("0 dB");
         tv = (TextView) findViewById(R.id.minLevelText);
         tv.setText(String.format("%d dB", (int) Math.floor(mEqualizerMinBandLevel / 100)));
-        equalizerUpdateDisplay();
     }
 
     private String format(String format, Object... args) {
@@ -792,12 +906,6 @@ public class ActivityMusic extends AppCompatActivity {
             final int progress = level - mEqualizerMinBandLevel;
             mEqualizerVisualizer[band].setProgress(progress);
         }
-        mEQPreset = ControlPanelEffect.getParameterInt(mContext, mCurrentLevel,
-                ControlPanelEffect.Key.eq_current_preset);
-        if (mEQPreset >= mEQPresetNames.length) {
-            mEQPreset = 0;
-        }
-        mGallery.setSelection(mEQPreset);
     }
 
     /**
@@ -822,7 +930,6 @@ public class ActivityMusic extends AppCompatActivity {
     private void equalizerSetPreset(final int preset) {
         ControlPanelEffect.setParameterInt(mContext, mCurrentLevel,
                 ControlPanelEffect.Key.eq_current_preset, preset);
-        equalizerUpdateDisplay();
     }
 
     /**
@@ -834,6 +941,15 @@ public class ActivityMusic extends AppCompatActivity {
     private void presetReverbSetPreset(final int preset) {
         ControlPanelEffect.setParameterInt(mContext, mCurrentLevel,
                 ControlPanelEffect.Key.pr_current_preset, preset);
+        ControlPanelEffect.setParameterBoolean(mContext, mCurrentLevel,
+                ControlPanelEffect.Key.pr_enabled, preset != 0);
+    }
+
+    private void stereoWideSetStrength(final int strength) {
+        ControlPanelEffect.setParameterInt(mContext, mCurrentLevel,
+                ControlPanelEffect.Key.sw_strength, strength);
+        ControlPanelEffect.setParameterBoolean(mContext, mCurrentLevel,
+                ControlPanelEffect.Key.sw_enabled, strength != 0);
     }
 
     /**

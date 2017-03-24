@@ -113,6 +113,7 @@ public class Gallery extends android.widget.Gallery {
 
         if (enabled) {
             final TextView tv = (TextView) getSelectedView();
+            mLastView = tv;
             if (tv != null) {
                 tv.setTextColor(mHighlightColor);
             }
