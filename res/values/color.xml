@@ -29,4 +29,8 @@
     <color name="spinner_detail_back">#ffffff</color>
     <color name="spinner_detail_text">#000000</color>
     <color name="current_level_color">@android:color/white</color>
+    <color name="textColor">@android:color/black</color>
+    <color name="drawer_header_text_color">@android:color/white</color>
+    <color name="spinner_bg_color">@android:color/white</color>
+    <color name="gallery_bg_color">@android:color/white</color>
 </resources>

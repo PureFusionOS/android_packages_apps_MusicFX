@@ -44,7 +44,7 @@ limitations under the License.
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:text="@string/eq_dialog_title"
-            android:textColor="@android:color/white"
+            android:textColor="@color/drawer_header_text_color"
             android:paddingStart="@dimen/nav_header_spacing"
             android:textAppearance="?android:attr/textAppearanceMedium" />
     </LinearLayout>

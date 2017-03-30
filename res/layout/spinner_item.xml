@@ -37,4 +37,4 @@
     android:singleLine="true"
     android:ellipsize="marquee"
     android:gravity="center_vertical"
-    android:textColor="@android:color/black"/>
+    android:textColor="@color/textColor"/>
