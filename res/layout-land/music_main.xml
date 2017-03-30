@@ -100,7 +100,7 @@
                         android:id="@+id/eqPresets"
                         android:layout_width="match_parent"
                         android:layout_height="40dip"
-                        android:background="@android:color/white"
+                        android:background="@color/gallery_bg_color"
                         android:fadingEdgeLength="50dip"
                         android:gravity="center_vertical"
                         android:padding="0dip"
@@ -144,7 +144,7 @@
                                 android:gravity="center"
                                 android:text="@string/bass_boost_strength"
                                 android:textAlignment="center"
-                                android:textColor="@android:color/black" />
+                                android:textColor="@color/textColor" />
                         </LinearLayout>
 
                         <LinearLayout
@@ -172,7 +172,7 @@
                                 android:singleLine="true"
                                 android:text="@string/virtualizer_strength"
                                 android:textAlignment="center"
-                                android:textColor="@android:color/black" />
+                                android:textColor="@color/textColor" />
                         </LinearLayout>
                     </LinearLayout>
 
@@ -180,7 +180,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="40dp"
                         android:layout_gravity="bottom"
-                        android:background="@android:color/white"
+                        android:background="@color/spinner_bg_color"
                         android:orientation="horizontal"
                         android:paddingEnd="20dp"
                         android:paddingStart="20dp">
@@ -191,14 +191,14 @@
                             android:layout_weight="1"
                             android:paddingStart="20dp"
                             android:text="@string/pr_title"
-                            android:textColor="@android:color/black" />
+                            android:textColor="@color/textColor" />
 
                         <Spinner
                             android:id="@+id/prSpinner"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:textColor="@android:color/black" />
+                            android:textColor="@color/textColor" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -206,7 +206,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="40dp"
                         android:layout_gravity="bottom"
-                        android:background="@android:color/white"
+                        android:background="@color/spinner_bg_color"
                         android:orientation="horizontal"
                         android:paddingEnd="20dp"
                         android:paddingStart="20dp">
@@ -217,14 +217,14 @@
                             android:layout_weight="1"
                             android:paddingStart="20dp"
                             android:text="@string/sw_title"
-                            android:textColor="@android:color/black" />
+                            android:textColor="@color/textColor" />
 
                         <Spinner
                             android:id="@+id/swSpinner"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:textColor="@android:color/black" />
+                            android:textColor="@color/textColor" />
                         </LinearLayout>
                     </LinearLayout>
             </LinearLayout>

@@ -36,7 +36,7 @@
             android:alpha="0.54"
             android:textSize="12sp"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@android:color/black" />
+            android:textColor="@color/textColor" />
         <TextView
             android:id="@+id/centerLevelText"
             android:layout_width="wrap_content"
@@ -45,7 +45,7 @@
             android:alpha="0.54"
             android:textSize="12sp"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@android:color/black" />
+            android:textColor="@color/textColor" />
         <TextView
             android:id="@+id/minLevelText"
             android:layout_width="wrap_content"
@@ -54,6 +54,6 @@
             android:alpha="0.54"
             android:textSize="12sp"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@android:color/black" />
+            android:textColor="@color/textColor" />
     </RelativeLayout>
 </LinearLayout>

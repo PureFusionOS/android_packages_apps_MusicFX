@@ -55,5 +55,5 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         android:gravity="center"
         android:alpha="0.54"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textColor="@android:color/black" />
+        android:textColor="@color/textColor" />
 </LinearLayout>
