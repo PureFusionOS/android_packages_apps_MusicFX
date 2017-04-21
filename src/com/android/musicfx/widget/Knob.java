@@ -71,7 +71,6 @@ public class Knob extends FrameLayout {
     private boolean mEnabled = false;
     private boolean mBinary = false;
 
-    private int mHighlightColor;
     private int mLowlightColor;
     private int mDisabledColor;
 
@@ -110,9 +109,8 @@ public class Knob extends FrameLayout {
         li.inflate(R.layout.knob, this, true);
 
         Resources res = getResources();
-        mHighlightColor = res.getColor(R.color.highlight);
-        mLowlightColor = res.getColor(R.color.lowlight);
-        mDisabledColor = res.getColor(R.color.disabled_knob);
+        mLowlightColor = res.getColor(R.color.knob_current_level);
+        mDisabledColor = res.getColor(R.color.knob_disabled);
 
         ((ImageView) findViewById(R.id.knob_foreground)).setImageResource(R.drawable.knob);
         mProgressTV = (TextView) findViewById(R.id.knob_value);
