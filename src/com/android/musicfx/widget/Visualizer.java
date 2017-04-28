@@ -91,9 +91,9 @@ public class Visualizer extends LinearLayout {
         li.inflate(R.layout.visualizer, this, true);
 
         Resources res = getResources();
-        mHighlightColor = res.getColor(R.color.highlight);
-        mLowlightColor = res.getColor(R.color.lowlight);
-        mDisabledColor = res.getColor(R.color.disabled_knob);
+        mHighlightColor = res.getColor(R.color.visualizer_highlight);
+        mLowlightColor = res.getColor(R.color.visualizer_lowlight);
+        mDisabledColor = res.getColor(R.color.visualizer_disabled);
         mTVHeight = res.getDimension(R.dimen.eq_text_height);
         mTextBottom = res.getDimensionPixelOffset(R.dimen.visualizer_text_bottom);
         mTileBottom = res.getDimensionPixelOffset(R.dimen.visualizer_tile_bottom);
