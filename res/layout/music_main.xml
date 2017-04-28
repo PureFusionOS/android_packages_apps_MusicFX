@@ -89,6 +89,7 @@
                     layout="@layout/music_eq"
                     android:layout_width="wrap_content"
                     android:layout_height="0dip"
+                    android:layout_gravity="center_horizontal"
                     android:layout_weight="1" />
 
                 <com.android.musicfx.widget.Gallery
