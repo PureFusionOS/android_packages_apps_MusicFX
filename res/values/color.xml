@@ -15,15 +15,15 @@
 -->
 
 <resources>
-    <color name="primaryColor">#263238</color>
-    <color name="primaryColorDark">#14171A</color>
-    <color name="accentColor">#263238</color>
-    <color name="highlight">@color/accentColor</color>
-    <color name="lowlight">#009688</color>
+    <color name="primaryColor">@*android:color/primary_device_default_dark</color>
+    <color name="primaryColorDark">@*android:color/primary_dark_device_default_dark</color>
+    <color name="accentColor">@*android:color/accent_device_default_light</color>
+    <color name="highlight">@color/primaryColor</color>
+    <color name="lowlight">@color/accentColor</color>
     <color name="grey">#000000</color>
-    <color name="disabled">#525252</color>
-    <color name="disabled_gallery">#525252</color>
-    <color name="disabled_knob">#525252</color>
+    <color name="disabled">@*android:color/tertiary_device_default_settings</color>
+    <color name="disabled_gallery">@color/disabled</color>
+    <color name="disabled_knob">@color/disabled</color>
     <color name="current_level_color">@android:color/white</color>
     <color name="textColor">@android:color/black</color>
     <color name="drawer_header_text_color">@android:color/white</color>
