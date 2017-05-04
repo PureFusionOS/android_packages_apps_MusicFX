@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    
+
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/menu_speaker"
@@ -29,4 +29,18 @@ limitations under the License.
             android:title="@string/drawer_item_bluetooth"
             android:icon="@drawable/ic_bluetooth" />
     </group>
+
+    <item android:title="@string/preset_menu">
+        <menu>
+            <item
+                 android:id="@+id/save_preset"
+                 android:title="@string/save_preset"
+                 android:icon="@drawable/ic_save_preset"/>
+
+            <item
+                 android:id="@+id/load_preset"
+                 android:title="@string/load_preset"
+                 android:icon="@drawable/ic_load_preset"/>
+        </menu>
+    </item>
 </menu>

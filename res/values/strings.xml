@@ -70,4 +70,12 @@
     <string name="stereowide_high">High</string>
     <string name="stereowide_none">None</string>
     <string name="sw_title">Stereo widener</string>
+
+    <!-- Presets -->
+    <string name="preset_menu">Presets</string>
+    <string name="save_preset">Save preset</string>
+    <string name="load_preset">Load preset</string>
+    <string name="new_preset">New preset...</string>
+    <string name="preset_save_toast">Preset saved</string>
+    <string name="preset_load_toast">Preset loaded</string>
 </resources>

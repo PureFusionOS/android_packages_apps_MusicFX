@@ -45,7 +45,7 @@ public class ControlPanelEffect {
     public static final String BLUETOOTH_PREF_SCOPE = "com.android.musicfx.bluetooth";
     public static final String PREF_SCOPE_CHANGED = "com.android.musicfx.PREF_SCOPE_CHANGED";
 
-    private static String[] ALL_PREF_SCOPES = new String[] {SPEAKER_PREF_SCOPE, HEADSET_PREF_SCOPE, BLUETOOTH_PREF_SCOPE};
+    public static String[] ALL_PREF_SCOPES = new String[] {SPEAKER_PREF_SCOPE, HEADSET_PREF_SCOPE, BLUETOOTH_PREF_SCOPE};
     /**
      * Audio session priority
      */
