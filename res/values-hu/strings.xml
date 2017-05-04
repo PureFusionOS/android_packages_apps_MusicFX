@@ -24,7 +24,7 @@
   <string name="combo_device">Effektek csak a fejhallgatón való lejátszást támogatják.</string>
   <string name="bass_boost_strength">Mélyhangkiemelő</string>
   <string name="virtualizer_strength">Térhatású hangzás</string>
-  <string name="pr_title">Visszaverődések</string>
+  <string name="pr_title">Visszaverődések:</string>
   <string name="pr_summary">További visszaverődési hatások</string>
   <string name="pr_dialog_title">Visszaverődési készlet</string>
   <string name="setup">Beállítás</string>
@@ -62,5 +62,5 @@
   <string name="stereowide_moderate">Mérsékelt</string>
   <string name="stereowide_high">Magas</string>
   <string name="stereowide_none">Nincs</string>
-  <string name="sw_title">Sztereó widener</string>
+  <string name="sw_title">Sztereó widener:</string>
 </resources>

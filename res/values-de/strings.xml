@@ -62,5 +62,5 @@
   <string name="stereowide_moderate">Moderat</string>
   <string name="stereowide_high">Hoch</string>
   <string name="stereowide_none">Kein</string>
-  <string name="sw_title">Stereo Erweiterung</string>
+  <string name="sw_title">Stereo Erweiterung:</string>
 </resources>

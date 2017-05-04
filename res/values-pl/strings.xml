@@ -24,7 +24,7 @@
   <string name="combo_device">Efekty obsługiwane tylko przy podłączonych słuchawkach.</string>
   <string name="bass_boost_strength">Basy</string>
   <string name="virtualizer_strength">Dźwięk przestrzenny</string>
-  <string name="pr_title">Pogłos</string>
+  <string name="pr_title">Pogłos:</string>
   <string name="pr_summary">Dodatkowe efekty pogłosu</string>
   <string name="pr_dialog_title">Przywróć ustawienia</string>
   <string name="setup">Konfiguracja</string>
@@ -49,5 +49,5 @@
   <string name="stereowide_moderate">Umiarkowany</string>
   <string name="stereowide_high">Wysoki</string>
   <string name="stereowide_none">Żaden</string>
-  <string name="sw_title">Rozszerzenie stereo</string>
+  <string name="sw_title">Rozszerzenie stereo:</string>
 </resources>

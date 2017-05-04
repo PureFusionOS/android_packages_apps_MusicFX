@@ -62,5 +62,5 @@
   <string name="stereowide_moderate">Moderado</string>
   <string name="stereowide_high">Alto</string>
   <string name="stereowide_none">Ninguno</string>
-  <string name="sw_title">Potenciador de estéreo</string>
+  <string name="sw_title">Potenciador de estéreo:</string>
 </resources>

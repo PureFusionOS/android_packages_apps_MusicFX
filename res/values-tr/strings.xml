@@ -24,7 +24,7 @@
   <string name="combo_device">Efektler sadece kulaklıkla çalınırken desteklenir.</string>
   <string name="bass_boost_strength">Güçlü bas</string>
   <string name="virtualizer_strength">Surround ses</string>
-  <string name="pr_title">Yankılanma</string>
+  <string name="pr_title">Yankılanma:</string>
   <string name="pr_summary">Oda yankılanma efektleri ekle</string>
   <string name="pr_dialog_title">Yankılanma ön ayarı</string>
   <string name="setup">Kurulum</string>
@@ -62,5 +62,5 @@
   <string name="stereowide_moderate">Orta</string>
   <string name="stereowide_high">Yüksek</string>
   <string name="stereowide_none">Hiçbiri</string>
-  <string name="sw_title">Stereo genişletici</string>
+  <string name="sw_title">Stereo genişletici:</string>
 </resources>

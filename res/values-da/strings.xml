@@ -23,7 +23,7 @@
   <string name="headset_plug">Tilslut hovedtelefoner for at få disse effekter.</string>
   <string name="bass_boost_strength">Bass boost</string>
   <string name="virtualizer_strength">Surroundsound</string>
-  <string name="pr_title">Reverb</string>
+  <string name="pr_title">Reverb:</string>
   <string name="pr_summary">Ekstra rumklangseffekter</string>
   <string name="pr_dialog_title">Forudindstilling af rumklang</string>
   <string name="setup">Opsætning</string>

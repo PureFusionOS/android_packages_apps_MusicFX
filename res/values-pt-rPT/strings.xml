@@ -24,7 +24,7 @@
   <string name="combo_device">Os efeitos são suportados apenas no modo de reprodução com auriculares.</string>
   <string name="bass_boost_strength">Aumento de graves</string>
   <string name="virtualizer_strength">Som surround</string>
-  <string name="pr_title">Eco</string>
+  <string name="pr_title">Eco:</string>
   <string name="pr_summary">Efeitos ambientais de eco</string>
   <string name="pr_dialog_title">Predefinição de eco</string>
   <string name="setup">Configuração</string>
@@ -62,5 +62,5 @@
   <string name="stereowide_moderate">Moderado</string>
   <string name="stereowide_high">Alto</string>
   <string name="stereowide_none">Nenhum</string>
-  <string name="sw_title">Amplificador stereo</string>
+  <string name="sw_title">Amplificador stereo:</string>
 </resources>

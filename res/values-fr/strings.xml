@@ -24,7 +24,7 @@
   <string name="combo_device">L\'effet est disponible uniquement lorsque vous utilisez les écouteurs</string>
   <string name="bass_boost_strength">Amplification des basses</string>
   <string name="virtualizer_strength">Son surround</string>
-  <string name="pr_title">Réverbération</string>
+  <string name="pr_title">Réverbération:</string>
   <string name="pr_summary">Effets de réverbération additionnels</string>
   <string name="pr_dialog_title">Préréglage de réverbération</string>
   <string name="setup">Configuration</string>
@@ -58,5 +58,5 @@
   <string name="stereowide_moderate">Modéré</string>
   <string name="stereowide_high">Élevé</string>
   <string name="stereowide_none">Aucun</string>
-  <string name="sw_title">Élargisseur stéréo</string>
+  <string name="sw_title">Élargisseur stéréo:</string>
 </resources>

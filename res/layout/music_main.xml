@@ -169,8 +169,6 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
-                    android:paddingStart="20dp"
-                    android:paddingEnd="20dp"
                     android:layout_gravity="bottom"
                     android:orientation="horizontal"
                     android:background="@color/spinner_txt_area_color" >
@@ -178,9 +176,10 @@
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:paddingStart="20dp"
                         android:layout_weight="1"
                         android:text="@string/pr_title"
+                        android:gravity="right"
+                        android:paddingEnd="5dp"
                         android:textColor="@color/textColor" />
 
                     <Spinner
@@ -195,8 +194,6 @@
                     android:id="@+id/swSpinnerContainer"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
-                    android:paddingStart="20dp"
-                    android:paddingEnd="20dp"
                     android:layout_gravity="bottom"
                     android:orientation="horizontal"
                     android:background="@color/spinner_txt_area_color" >
@@ -204,9 +201,10 @@
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:paddingStart="20dp"
                         android:layout_weight="1"
                         android:text="@string/sw_title"
+                        android:gravity="right"
+                        android:paddingEnd="5dp"
                         android:textColor="@color/textColor" />
 
                     <Spinner

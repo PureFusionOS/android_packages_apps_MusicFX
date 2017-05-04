@@ -24,7 +24,7 @@
   <string name="combo_device">Effetti supportati solo al momento della riproduzione in cuffia.</string>
   <string name="bass_boost_strength">Bassi più intensi</string>
   <string name="virtualizer_strength">Audio surround</string>
-  <string name="pr_title">Riverbero</string>
+  <string name="pr_title">Riverbero:</string>
   <string name="pr_summary">Ulteriori effetti di riverbero nella stanza</string>
   <string name="pr_dialog_title">Azzera riverbero</string>
   <string name="setup">Configurazione</string>
@@ -62,5 +62,5 @@
   <string name="stereowide_moderate">Moderato</string>
   <string name="stereowide_high">Alto</string>
   <string name="stereowide_none">Nessuno</string>
-  <string name="sw_title">Amplificatore stereo</string>
+  <string name="sw_title">Amplificatore stereo:</string>
 </resources>

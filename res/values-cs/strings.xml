@@ -62,5 +62,5 @@
   <string name="stereowide_moderate">Střední</string>
   <string name="stereowide_high">Vysoké</string>
   <string name="stereowide_none">Nic</string>
-  <string name="sw_title">Stereo rozšíření</string>
+  <string name="sw_title">Stereo rozšíření:</string>
 </resources>

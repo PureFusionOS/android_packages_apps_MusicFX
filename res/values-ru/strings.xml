@@ -24,7 +24,7 @@
   <string name="combo_device">Эффекты поддерживаются только наушниками.</string>
   <string name="bass_boost_strength">Усиление басов</string>
   <string name="virtualizer_strength">Объемный звук</string>
-  <string name="pr_title">Реверберация</string>
+  <string name="pr_title">Реверберация:</string>
   <string name="pr_summary">Дополнительные эффекты реверберации</string>
   <string name="pr_dialog_title">Пресет реверберации</string>
   <string name="setup">Настройка</string>
@@ -62,5 +62,5 @@
   <string name="stereowide_moderate">Умеренный</string>
   <string name="stereowide_high">Высокий</string>
   <string name="stereowide_none">Нет</string>
-  <string name="sw_title">Расширенное стерео</string>
+  <string name="sw_title">Расширенное стерео:</string>
 </resources>

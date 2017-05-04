@@ -24,7 +24,7 @@
   <string name="combo_device">Effekter støttes bare ved hodetelefonen avspilling.</string>
   <string name="bass_boost_strength">Bassforsterking</string>
   <string name="virtualizer_strength">Surround-lyd</string>
-  <string name="pr_title">Romklang</string>
+  <string name="pr_title">Romklang:</string>
   <string name="pr_summary">Ekstra romgjenklang effekter</string>
   <string name="pr_dialog_title">Romklang forhåndsinnstilling</string>
   <string name="setup">Konfigurering</string>
@@ -61,5 +61,5 @@
   <string name="stereowide_moderate">Moderat</string>
   <string name="stereowide_high">Høy</string>
   <string name="stereowide_none">Stille</string>
-  <string name="sw_title">Stereo-utvidelse</string>
+  <string name="sw_title">Stereo-utvidelse:</string>
 </resources>
