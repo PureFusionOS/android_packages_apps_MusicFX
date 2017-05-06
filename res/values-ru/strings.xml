@@ -16,8 +16,9 @@
 
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_name" msgid="5717136097222561957">"MusicFX"</string>
+    <string name="app_name" msgid="5717136097222561957">Эквалайзер</string>
     <string name="no_effects" msgid="5067916002004255814">"Эффекты недоступны."</string>
+	<string name="main_toggle_effects_title">Звуковые эффекты</string>
     <string name="eq_dialog_title" msgid="2020244436368289652">"Эквалайзер"</string>
     <string name="headset_plug" msgid="4505819850289423141">"Чтобы услышать эти эффекты, подключите наушники."</string>
     <string name="bass_boost_strength" msgid="882301530007752270">"Усиление басов"</string>
@@ -26,4 +27,43 @@
     <string name="ci_extreme" msgid="1736938429763948084">"Усилитель FX"</string>
     <string name="user" msgid="3949460956502898057">"Своя настройка"</string>
     <string name="picker_title" msgid="8464126693702817261">"Управление звуковыми эффектами"</string>
+    <string name="pr_title">Реверберация</string>
+    <string name="pr_summary">Дополнительные эффекты реверберации помещения</string>
+    <string name="pr_dialog_title">Шаблоны реверберации</string>
+
+    <string name="normal">Нормальный</string>
+    <string name="classical">Классический</string>
+    <string name="dance">Танцевальный</string>
+    <string name="flat">Плоский</string>
+    <string name="folk">Фолк</string>
+    <string name="heavy_metal">Тяжелый металл</string>
+    <string name="hip_hop">Хип-хоп</string>
+    <string name="jazz">Джаз</string>
+    <string name="pop">Поп</string>
+    <string name="rock">Рок</string>
+
+    <string name="none">Нет</string>
+    <string name="smallroom">Маленькая комната</string>
+    <string name="mediumroom">Средняя комната</string>
+    <string name="largeroom">Большая комната</string>
+    <string name="mediumhall">Средняя сцена</string>
+    <string name="largehall">Большая сцена</string>
+    <string name="plate">Пластина</string>
+
+    <string name="eq_custom">Для настройки выберите "Своя настройка"</string>
+    <string name="power_on_prompt">Нажмите кнопку включения в правом верхнем углу.</string>
+
+    <string name="toggle_button_on">ВКЛ</string>
+    <string name="toggle_button_off">ВЫКЛ</string>
+
+    <string name="drawer_item_speaker">Динамик</string>
+    <string name="drawer_item_headset">Наушники</string>
+    <string name="drawer_item_bluetooth">Bluetooth</string>
+    <string name="drawer_open">Открыть панель навигации</string>
+    <string name="drawer_close">Закрыть панель навигации</string>
+    <string name="stereowide_light">Легкий</string>
+    <string name="stereowide_moderate">Умеренный</string>
+    <string name="stereowide_high">Сильный</string>
+    <string name="stereowide_none">Нет</string>
+    <string name="sw_title">Стереоуширитель</string>
 </resources>
