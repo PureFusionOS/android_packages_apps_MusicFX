@@ -19,13 +19,13 @@
   <!-- ControlPanelMusic strings -->
   <string name="no_effects">Efektler kullanılamıyor.</string>
   <string name="main_toggle_effects_title">Ses efektleri</string>
-  <string name="eq_dialog_title">Ekolayzer</string>
+  <string name="eq_dialog_title">Dengeleyici</string>
   <string name="headset_plug">Bu efektler için kulaklığı takın.</string>
   <string name="combo_device">Efektler sadece kulaklıkla çalınırken desteklenir.</string>
-  <string name="bass_boost_strength">Güçlü bas</string>
+  <string name="bass_boost_strength">Bas güçlendirme</string>
   <string name="virtualizer_strength">Surround ses</string>
   <string name="pr_title">Yankılanma</string>
-  <string name="pr_summary">Oda yankılanma efektleri ekle</string>
+  <string name="pr_summary">İlave oda yankılanması efektleri</string>
   <string name="pr_dialog_title">Yankılanma ön ayarı</string>
   <string name="setup">Kurulum</string>
   <string name="normal">Normal</string>
