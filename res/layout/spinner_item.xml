@@ -34,7 +34,7 @@
     android:layout_height="wrap_content"
     android:singleLine="true"
     android:ellipsize="marquee"
-    android:gravity="left"
+    android:gravity="center"
     android:paddingStart="5dp"
     android:background="@color/spinner_reverb_list"
     android:textColor="@color/textColor"/>
