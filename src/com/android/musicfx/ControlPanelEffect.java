@@ -157,52 +157,51 @@ public class ControlPanelEffect {
      * @param context
      */
     public static void initEffectsPreferences(final Context context) {
-        for (String prefLevel : ALL_PREF_SCOPES) {
-        final SharedPreferences prefs = context.getSharedPreferences(prefLevel,
-                Context.MODE_PRIVATE);
-
         Log.d(TAG, "initEffectsPreferences");
         synchronized (mEQInitLock) {
             init(context);
         }
-        // init preferences
-        try {
-            final SharedPreferences.Editor editor = prefs.edit();
+        for (String prefLevel : ALL_PREF_SCOPES) {
+            final SharedPreferences prefs = context.getSharedPreferences(prefLevel,
+                    Context.MODE_PRIVATE);
+            // init preferences
+            try {
+                final SharedPreferences.Editor editor = prefs.edit();
 
-            editor.putInt(Key.eq_level_range.toString() + 0, mEQBandLevelRange[0]);
-            editor.putInt(Key.eq_level_range.toString() + 1, mEQBandLevelRange[1]);
-            editor.putInt(Key.eq_num_bands.toString(), mEQNumBands);
-            editor.putInt(Key.eq_num_presets.toString(), mEQNumPresets);
-            // Resetting the EQ arrays depending on the real # bands with defaults if
-            // band < default size else 0 by copying default arrays over new ones
-            final short[] eQPresetUserBandLevelDefault = Arrays.copyOf(
-                    EQUALIZER_PRESET_USER_BAND_LEVEL_DEFAULT, mEQNumBands);
-            // if no preset prefs set use CI EXTREME (= numPresets)
-            final short eQPreset = (short) prefs.getInt(Key.eq_current_preset.toString(),
-                    mEQNumPresets);
-            final short[] bandLevel = new short[mEQNumBands];
-            for (short band = 0; band < mEQNumBands; band++) {
-                if (eQPreset < mEQNumPresets) {
-                    // OpenSL ES effect presets
-                    bandLevel[band] = mEQPresetOpenSLESBandLevel[eQPreset][band];
-                } else {
-                    // User
-                    bandLevel[band] = (short) prefs.getInt(
-                            Key.eq_preset_user_band_level.toString() + band,
+                editor.putInt(Key.eq_level_range.toString() + 0, mEQBandLevelRange[0]);
+                editor.putInt(Key.eq_level_range.toString() + 1, mEQBandLevelRange[1]);
+                editor.putInt(Key.eq_num_bands.toString(), mEQNumBands);
+                editor.putInt(Key.eq_num_presets.toString(), mEQNumPresets);
+                // Resetting the EQ arrays depending on the real # bands with defaults if
+                // band < default size else 0 by copying default arrays over new ones
+                final short[] eQPresetUserBandLevelDefault = Arrays.copyOf(
+                        EQUALIZER_PRESET_USER_BAND_LEVEL_DEFAULT, mEQNumBands);
+                // if no preset prefs set use CI EXTREME (= numPresets)
+                final short eQPreset = (short) prefs.getInt(Key.eq_current_preset.toString(),
+                        mEQNumPresets);
+                final short[] bandLevel = new short[mEQNumBands];
+                for (short band = 0; band < mEQNumBands; band++) {
+                    if (eQPreset < mEQNumPresets) {
+                        // OpenSL ES effect presets
+                        bandLevel[band] = mEQPresetOpenSLESBandLevel[eQPreset][band];
+                    } else {
+                        // User
+                        bandLevel[band] = (short) prefs.getInt(
+                                Key.eq_preset_user_band_level.toString() + band,
+                                eQPresetUserBandLevelDefault[band]);
+                    }
+                    editor.putInt(Key.eq_band_level.toString() + band, bandLevel[band]);
+                    editor.putInt(Key.eq_center_freq.toString() + band, mEQCenterFreq[band]);
+                    editor.putInt(Key.eq_preset_user_band_level_default.toString() + band,
                             eQPresetUserBandLevelDefault[band]);
                 }
-                editor.putInt(Key.eq_band_level.toString() + band, bandLevel[band]);
-                editor.putInt(Key.eq_center_freq.toString() + band, mEQCenterFreq[band]);
-                editor.putInt(Key.eq_preset_user_band_level_default.toString() + band,
-                        eQPresetUserBandLevelDefault[band]);
+                for (short preset = 0; preset < mEQNumPresets; preset++) {
+                    editor.putString(Key.eq_preset_name.toString() + preset, mEQPresetNames[preset]);
+                }
+                editor.commit();
+            } catch (final RuntimeException e) {
+                Log.e(TAG, "initEffectsPreferences: processingEnabled: " + e);
             }
-            for (short preset = 0; preset < mEQNumPresets; preset++) {
-                editor.putString(Key.eq_preset_name.toString() + preset, mEQPresetNames[preset]);
-            }
-            editor.commit();
-        } catch (final RuntimeException e) {
-            Log.e(TAG, "initEffectsPreferences: processingEnabled: " + e);
-        }
         }
     }
 
