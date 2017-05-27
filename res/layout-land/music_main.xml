@@ -92,8 +92,9 @@
 
                     <include
                         layout="@layout/music_eq"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dip"
                         android:layout_weight="1" />
 
                     <com.android.musicfx.widget.Gallery
@@ -189,17 +190,21 @@
                         <TextView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
                             android:layout_weight="1"
-                            android:paddingStart="20dp"
                             android:text="@string/pr_title"
+                            android:textAlignment="center"
                             android:textColor="@color/textColor" />
 
-                        <Spinner
-                            android:id="@+id/prSpinner"
+                        <TextView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
                             android:layout_weight="1"
+                            android:text="@string/sw_title"
+                            android:textAlignment="center"
                             android:textColor="@color/textColor" />
+
                     </LinearLayout>
 
                     <LinearLayout
@@ -212,12 +217,11 @@
                         android:paddingEnd="20dp"
                         android:paddingStart="20dp">
 
-                        <TextView
+                        <Spinner
+                            android:id="@+id/prSpinner"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:paddingStart="20dp"
-                            android:text="@string/sw_title"
                             android:textColor="@color/textColor" />
 
                         <Spinner
