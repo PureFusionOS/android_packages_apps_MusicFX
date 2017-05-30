@@ -163,6 +163,7 @@ public class ActivityMusic extends AppCompatActivity {
     private Gallery mGallery;
     private int mHighlightColor;
     private int mTextColor;
+    private int mSpinoffColor;
 
     /**
      * Array containing RSid of preset reverb names.
@@ -246,6 +247,7 @@ public class ActivityMusic extends AppCompatActivity {
         mViewGroup = (ViewGroup) findViewById(R.id.contentSoundEffects);
         mHighlightColor = getResources().getColor(R.color.highlight_gallery_text);
         mTextColor = getResources().getColor(R.color.textColor);
+        mSpinoffColor = getResources().getColor(R.color.spinner_disabled);
 
         // Fill array with presets from AudioEffects call.
         // allocate a space for 1 extra strings (User)
@@ -438,15 +440,13 @@ public class ActivityMusic extends AppCompatActivity {
     }
 
     private void updateCurrentLevelInfo(String level) {
+        String current = getResources().getString(R.string.current_output);
         if (level == ControlPanelEffect.SPEAKER_PREF_SCOPE) {
-            mCurrentLevelText.setText(getResources().getString(R.string.drawer_item_speaker));
-            mCurrentLevelText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_speaker, 0, 0, 0);
+            mCurrentLevelText.setText(current  + " " + getResources().getString(R.string.drawer_item_speaker));
         } else if (level == ControlPanelEffect.HEADSET_PREF_SCOPE) {
-            mCurrentLevelText.setText(getResources().getString(R.string.drawer_item_headset));
-            mCurrentLevelText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_headphones, 0, 0, 0);
+            mCurrentLevelText.setText(current  + " " + getResources().getString(R.string.drawer_item_headset));
         } else if (level == ControlPanelEffect.BLUETOOTH_PREF_SCOPE) {
-            mCurrentLevelText.setText(getResources().getString(R.string.drawer_item_bluetooth));
-            mCurrentLevelText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_bluetooth, 0, 0, 0);
+            mCurrentLevelText.setText(current  + " " + getResources().getString(R.string.drawer_item_bluetooth));
         }
     }
 
@@ -556,7 +556,7 @@ public class ActivityMusic extends AppCompatActivity {
                 if (position == mPRPreset && position != 0 && mPRPresetSpinner.isEnabled()) {
                     ((TextView) item.findViewById(android.R.id.text1)).setTextColor(mHighlightColor);
                 } else {
-                    ((TextView) item.findViewById(android.R.id.text1)).setTextColor(mTextColor);
+                    ((TextView) item.findViewById(android.R.id.text1)).setTextColor(mSpinoffColor);
                 }
                 return item;
             }
@@ -578,7 +578,7 @@ public class ActivityMusic extends AppCompatActivity {
                         if (position != 0 && mPRPresetSpinner.isEnabled()) {
                             tv.setTextColor(mHighlightColor);
                         } else {
-                            tv.setTextColor(mTextColor);
+                            tv.setTextColor(mSpinoffColor);
                         }
                     }
                 }
@@ -601,7 +601,7 @@ public class ActivityMusic extends AppCompatActivity {
                 if (position == mSWStrength && position != 0 && mSWStrengthSpinner.isEnabled()) {
                     ((TextView) item.findViewById(android.R.id.text1)).setTextColor(mHighlightColor);
                 } else {
-                    ((TextView) item.findViewById(android.R.id.text1)).setTextColor(mTextColor);
+                    ((TextView) item.findViewById(android.R.id.text1)).setTextColor(mSpinoffColor);
                 }
                 return item;
             }
@@ -623,7 +623,7 @@ public class ActivityMusic extends AppCompatActivity {
                         if (position != 0 && mSWStrengthSpinner.isEnabled()) {
                             tv.setTextColor(mHighlightColor);
                         } else {
-                            tv.setTextColor(mTextColor);
+                            tv.setTextColor(mSpinoffColor);
                         }
                     }
                 }

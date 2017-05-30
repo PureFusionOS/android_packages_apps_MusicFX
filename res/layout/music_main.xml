@@ -71,11 +71,11 @@
                 <TextView
                     android:id="@+id/switchstatus"
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:gravity="center_vertical"
+                    android:layout_height="45dp"
+                    android:gravity="center"
                     android:drawablePadding="10dp"
                     android:textColor="@color/current_out_source_color"
-                    android:textSize="16sp" />
+                    android:textSize="14sp" />
             </LinearLayout>
 
             <com.android.musicfx.widget.InterceptableLinearLayout
@@ -182,7 +182,8 @@
                         android:layout_weight="1"
                         android:text="@string/pr_title"
                         android:textAlignment="center"
-                        android:textColor="@color/textColor" />
+                        android:textColor="@color/textColor"
+                        android:textStyle="bold"/>
 
                     <TextView
                         android:layout_width="0dp"
@@ -191,7 +192,8 @@
                         android:layout_weight="1"
                         android:text="@string/sw_title"
                         android:textAlignment="center"
-                        android:textColor="@color/textColor" />
+                        android:textColor="@color/textColor"
+                        android:textStyle="bold" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -209,13 +211,13 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:textColor="@color/textColor" />
+                        android:textColor="@color/spinner_disabled" />
                     <Spinner
                         android:id="@+id/swSpinner"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:textColor="@color/textColor" />
+                        android:textColor="@color/spinner_disabled" />
                 </LinearLayout>
             </com.android.musicfx.widget.InterceptableLinearLayout>
         </LinearLayout>
