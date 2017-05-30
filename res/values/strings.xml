@@ -65,6 +65,8 @@
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
 
+    <string name="current_output">Current output:</string>
+
     <string name="stereowide_light">Light</string>
     <string name="stereowide_moderate">Moderate</string>
     <string name="stereowide_high">High</string>

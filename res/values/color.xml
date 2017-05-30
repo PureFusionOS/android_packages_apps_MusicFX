@@ -12,7 +12,6 @@
 -->
 
 <resources>
-
     <color name="primaryColor">@*android:color/primary_device_default_dark</color> <!--material_grey_900-->
     <color name="primaryColorDark">@*android:color/primary_dark_device_default_dark</color> <!--dark grey-->
     <color name="accentColor">@*android:color/accent_device_default_light</color> <!--pixel blue-->
@@ -39,10 +38,11 @@
     <color name="eq_area_background">@android:color/white</color> <!-- eq levels area -->
     <color name="eq_textColor">@color/textColor</color> <!--eq levels min-middle-max indicators txt -->
     <color name="mainBackgroundColor">@android:color/white</color> <!-- horizontal empty space between the bar showing the current active out source and the eq levels area -->
-    <color name="current_out_source">#76777c</color> <!-- the bar with the current active out source icon and name -->
+    <color name="current_out_source">@color/primaryColorDark</color> <!-- the bar with the current active out source icon and name -->
     <color name="current_out_source_color">@android:color/white</color> <!-- icon and text showing the current active out source -->
     <color name="visualizer_highlight">#8b96dd</color> <!-- equalizer active level bar top element  -->
     <color name="visualizer_lowlight">@color/accentColor</color> <!-- equalizer active level bar elements -->
     <color name="visualizer_disabled">@color/disabled</color> <!-- equalizer level bar when musicfx is off -->
+    <color name="spinner_disabled">#76777c</color> <!-- spinner color when set to none or musicfx is off -->
 
 </resources>
