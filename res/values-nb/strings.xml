@@ -55,6 +55,7 @@
   <string name="toggle_button_off">Av</string>
   <string name="drawer_item_speaker">Høyttaler</string>
   <string name="drawer_item_headset">Hodetelefoner</string>
+  <string name="drawer_item_bluetooth">Bluetooth</string>
   <string name="drawer_open">Åpne navigasjonsskuff</string>
   <string name="drawer_close">Lukk navigasjonsskuff</string>
   <string name="stereowide_light">Lett</string>

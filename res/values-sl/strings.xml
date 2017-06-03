@@ -18,13 +18,35 @@
   <string name="app_name">MusicFX</string>
   <!-- ControlPanelMusic strings -->
   <string name="no_effects">Učinki niso na voljo.</string>
+  <string name="main_toggle_effects_title">Zvočni učinki</string>
   <string name="eq_dialog_title">Izenačevalnik</string>
   <string name="headset_plug">Za te učinke priključite slušalke.</string>
+  <string name="combo_device">Zvočni učinki za slušalke.</string>
   <string name="bass_boost_strength">Povečanje nizkih tonov</string>
   <string name="virtualizer_strength">Prostorski zvok</string>
+  <string name="pr_title">Odmev</string>
+  <string name="pr_summary">Dodatni učinki odmeva</string>
+  <string name="pr_dialog_title">Prednastavitve odmeva</string>
   <string name="setup">Namestitev</string>
+  <string name="normal">Običajen</string>
+  <string name="classical">Klasična</string>
+  <string name="dance">Ples</string>
+  <string name="flat">Ploska</string>
   <string name="ci_extreme">Izboljšanje učinkov</string>
   <string name="user">Uporabnik</string>
+  <string name="eq_custom">Za prilagoditev izberite \"Po meri\"</string>
+  <string name="power_on_prompt">Pritisnite gumb za vklop zgoraj desno.</string>
   <!-- title of control panel picker dialog [CHAR LIMIT=30] -->
   <string name="picker_title">Nadzorna plošča glasbenih učinkov</string>
+  <string name="toggle_button_on">Vklop</string>
+  <string name="toggle_button_off">Izklop</string>
+  <string name="drawer_item_speaker">Zvočnik</string>
+  <string name="drawer_item_headset">Slušalke</string>
+  <string name="drawer_open">Odprti navigacijski predal</string>
+  <string name="drawer_close">Zapri navigacijski predal</string>
+  <string name="stereowide_light">Lahkotno</string>
+  <string name="stereowide_moderate">Zmerno</string>
+  <string name="stereowide_high">Visoko</string>
+  <string name="stereowide_none">Brez</string>
+  <string name="sw_title">Širitelj sterea</string>
 </resources>

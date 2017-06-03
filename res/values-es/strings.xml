@@ -21,7 +21,7 @@
   <string name="main_toggle_effects_title">Efectos de audio</string>
   <string name="eq_dialog_title">Ecualizador</string>
   <string name="headset_plug">Para disfrutar de los efectos, debes conectar los auriculares.</string>
-  <string name="combo_device">Efectos sólo compatibles con reproducción de auriculares.</string>
+  <string name="combo_device">Efectos sólo compatibles usando auriculares.</string>
   <string name="bass_boost_strength">Refuerzo de graves</string>
   <string name="virtualizer_strength">Sonido envolvente</string>
   <string name="pr_title">Reverberación:</string>
@@ -32,7 +32,7 @@
   <string name="classical">Clásica</string>
   <string name="dance">Dance</string>
   <string name="flat">Plana</string>
-  <string name="folk">Folk</string>
+  <string name="folk">Tradicional</string>
   <string name="heavy_metal">Heavy Metal</string>
   <string name="hip_hop">Hip Hop</string>
   <string name="jazz">Jazz</string>
@@ -42,8 +42,8 @@
   <string name="user">Usuario</string>
   <string name="none">Ninguno</string>
   <string name="smallroom">Cuarto Pequeño</string>
-  <string name="mediumroom">Cuarto Mediano</string>
-  <string name="largeroom">Cuarto Grande</string>
+  <string name="mediumroom">Habitación mediana</string>
+  <string name="largeroom">Habitación grande</string>
   <string name="mediumhall">Salón Mediano</string>
   <string name="largehall">Salón Largo</string>
   <string name="plate">Plato</string>
