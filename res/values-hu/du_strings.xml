@@ -23,6 +23,8 @@
     <string name="drawer_open">Navigációs fiók megnyitása</string>
     <string name="drawer_close">Navigációs fiók bezárása</string>
 
+    <string name="current_output">Jelenlegi kimenet:</string>
+
     <string name="stereowide_light">Könnyű</string>
     <string name="stereowide_moderate">Mérsékelt</string>
     <string name="stereowide_high">Magas</string>
