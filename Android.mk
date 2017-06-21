@@ -23,5 +23,6 @@ LOCAL_SRC_FILES := $(call all-java-files-under, src)
 LOCAL_MIN_SDK_VERSION := 24
 LOCAL_PACKAGE_NAME := MusicFX
 LOCAL_CERTIFICATE := platform
+LOCAL_OVERRIDES_PACKAGES := AudioFX
 
 include $(BUILD_PACKAGE)
