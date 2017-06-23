@@ -21,7 +21,7 @@
   <string name="main_toggle_effects_title">Audio-Effekte</string>
   <string name="eq_dialog_title">Equalizer</string>
   <string name="headset_plug">Für diese Effekte brauchst du Kopfhörer.</string>
-  <string name="combo_device">Effekte nur auf Kopfhörer-Wiedergabe unterstützt.</string>
+  <string name="combo_device">Effekte nur bei Kopfhörer-Wiedergabe unterstützt.</string>
   <string name="bass_boost_strength">Bassverstärkung</string>
   <string name="virtualizer_strength">Surround-Sound</string>
   <string name="pr_title">Hall:</string>
