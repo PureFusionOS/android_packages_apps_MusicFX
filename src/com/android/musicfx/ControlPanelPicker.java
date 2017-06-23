@@ -105,4 +105,8 @@ public class ControlPanelPicker extends AlertActivity implements OnClickListener
         }
     }
 
+    @Override
+    public void onPrepareListView(ListView listView) {
+        //mAlertParams.mCheckedItem = mDefPanelPos;
+    }
 }
