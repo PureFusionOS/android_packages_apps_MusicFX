@@ -18,7 +18,6 @@ package com.android.musicfx;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -43,7 +42,7 @@ public class SeekBarRotator extends ViewGroup {
     }
 
     public SeekBarRotator(Context context, AttributeSet attrs, int defStyleAttr,
-            int defStyleRes) {
+                          int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 

@@ -34,44 +34,19 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ControlPanelEffect {
 
+    // Defaults
+    final static boolean GLOBAL_ENABLED_DEFAULT = false;
     private final static String TAG = "MusicFXControlPanelEffect";
-
     /**
      * Audio session priority
      */
     private static final int PRIORITY = 0;
-
-    /**
-     * The control mode specifies if control panel updates effects and preferences or only
-     * preferences.
-     */
-    static enum ControlMode {
-        /**
-         * Control panel updates effects and preferences. Applicable when audio session is delivered
-         * by user.
-         */
-        CONTROL_EFFECTS,
-        /**
-         * Control panel only updates preferences. Applicable when there was no audio or invalid
-         * session provided by user.
-         */
-        CONTROL_PREFERENCES
-    }
-
-    static enum Key {
-        global_enabled, virt_enabled, virt_strength_supported, virt_strength, virt_type, bb_enabled,
-        bb_strength, te_enabled, te_strength, avl_enabled, lm_enabled, lm_strength, eq_enabled,
-        eq_num_bands, eq_level_range, eq_center_freq, eq_band_level, eq_num_presets, eq_preset_name,
-        eq_preset_user_band_level, eq_preset_user_band_level_default,
-        eq_preset_opensl_es_band_level, eq_preset_ci_extreme_band_level, eq_current_preset,
-        pr_enabled, pr_current_preset
-    }
-
-    // Effect/audio session Mappings
     /**
      * Hashmap initial capacity
      */
     private static final int HASHMAP_INITIAL_CAPACITY = 16;
+
+    // Effect/audio session Mappings
     /**
      * Hashmap load factor
      */
@@ -80,7 +55,6 @@ public class ControlPanelEffect {
      * ConcurrentHashMap concurrency level
      */
     private static final int HASHMAP_CONCURRENCY_LEVEL = 2;
-
     /**
      * Map containing the Virtualizer audio session, effect mappings.
      */
@@ -101,33 +75,33 @@ public class ControlPanelEffect {
      */
     private static final ConcurrentHashMap<Integer, PresetReverb> mPresetReverbInstances = new ConcurrentHashMap<Integer, PresetReverb>(
             HASHMAP_INITIAL_CAPACITY, HASHMAP_LOAD_FACTOR, HASHMAP_CONCURRENCY_LEVEL);
-
     /**
      * Map containing the package name, audio session mappings.
      */
     private static final ConcurrentHashMap<String, Integer> mPackageSessions = new ConcurrentHashMap<String, Integer>(
             HASHMAP_INITIAL_CAPACITY, HASHMAP_LOAD_FACTOR, HASHMAP_CONCURRENCY_LEVEL);
-
-    // Defaults
-    final static boolean GLOBAL_ENABLED_DEFAULT = false;
     private final static boolean VIRTUALIZER_ENABLED_DEFAULT = true;
     private final static int VIRTUALIZER_STRENGTH_DEFAULT = 0;
     private final static boolean BASS_BOOST_ENABLED_DEFAULT = true;
     private final static int BASS_BOOST_STRENGTH_DEFAULT = 667;
     private final static boolean PRESET_REVERB_ENABLED_DEFAULT = false;
     private final static int PRESET_REVERB_CURRENT_PRESET_DEFAULT = 0; // None
-
     // EQ defaults
     private final static boolean EQUALIZER_ENABLED_DEFAULT = true;
     private final static String EQUALIZER_PRESET_NAME_DEFAULT = "Preset";
     private final static short EQUALIZER_NUMBER_BANDS_DEFAULT = 5;
     private final static short EQUALIZER_NUMBER_PRESETS_DEFAULT = 0;
-    private final static short[] EQUALIZER_BAND_LEVEL_RANGE_DEFAULT = { -1500, 1500 };
-    private final static int[] EQUALIZER_CENTER_FREQ_DEFAULT = { 60000, 230000, 910000, 3600000,
-            14000000 };
-    private final static short[] EQUALIZER_PRESET_CIEXTREME_BAND_LEVEL = { 0, 800, 400, 100, 1000 };
-    private final static short[] EQUALIZER_PRESET_USER_BAND_LEVEL_DEFAULT = { 0, 0, 0, 0, 0 };
-
+    private final static short[] EQUALIZER_BAND_LEVEL_RANGE_DEFAULT = {-1500, 1500};
+    private final static int[] EQUALIZER_CENTER_FREQ_DEFAULT = {60000, 230000, 910000, 3600000,
+            14000000};
+    private final static short[] EQUALIZER_PRESET_CIEXTREME_BAND_LEVEL = {0, 800, 400, 100, 1000};
+    private final static short[] EQUALIZER_PRESET_USER_BAND_LEVEL_DEFAULT = {0, 0, 0, 0, 0};
+    private final static Object mEQInitLock = new Object();
+    /**
+     * Default int argument used in methods to see that the arg is a dummy. Used for method
+     * overloading.
+     */
+    private final static int DUMMY_ARGUMENT = -1;
     // EQ effect properties which are invariable over all EQ effects sessions
     private static short[] mEQBandLevelRange = EQUALIZER_BAND_LEVEL_RANGE_DEFAULT;
     private static short mEQNumBands = EQUALIZER_NUMBER_BANDS_DEFAULT;
@@ -137,13 +111,6 @@ public class ControlPanelEffect {
             new short[EQUALIZER_NUMBER_PRESETS_DEFAULT][EQUALIZER_NUMBER_BANDS_DEFAULT];
     private static String[] mEQPresetNames;
     private static boolean mIsEQInitialized = false;
-    private final static Object mEQInitLock = new Object();
-
-    /**
-     * Default int argument used in methods to see that the arg is a dummy. Used for method
-     * overloading.
-     */
-    private final static int DUMMY_ARGUMENT = -1;
 
     /**
      * Inits effects preferences for the given context and package name in the control panel. If
@@ -151,11 +118,10 @@ public class ControlPanelEffect {
      *
      * @param context
      * @param packageName
-     * @param audioSession
-     *            System wide unique audio session identifier.
+     * @param audioSession System wide unique audio session identifier.
      */
     public static void initEffectsPreferences(final Context context, final String packageName,
-            final int audioSession) {
+                                              final int audioSession) {
         final SharedPreferences prefs = context.getSharedPreferences(packageName,
                 Context.MODE_PRIVATE);
         final SharedPreferences.Editor editor = prefs.edit();
@@ -332,8 +298,7 @@ public class ControlPanelEffect {
      * Gets the effect control mode based on the given audio session in the control panel. Control
      * mode defines if the control panel is controlling effects and/or preferences
      *
-     * @param audioSession
-     *            System wide unique audio session identifier.
+     * @param audioSession System wide unique audio session identifier.
      * @return effect control mode
      */
     public static ControlMode getControlMode(final int audioSession) {
@@ -348,13 +313,12 @@ public class ControlPanelEffect {
      *
      * @param context
      * @param packageName
-     * @param audioSession
-     *            System wide unique audio session identifier.
+     * @param audioSession System wide unique audio session identifier.
      * @param key
      * @param value
      */
     public static void setParameterBoolean(final Context context, final String packageName,
-            final int audioSession, final Key key, final boolean value) {
+                                           final int audioSession, final Key key, final boolean value) {
         try {
             final SharedPreferences prefs = context.getSharedPreferences(packageName,
                     Context.MODE_PRIVATE);
@@ -453,52 +417,52 @@ public class ControlPanelEffect {
                     // Set effect parameters
                     switch (key) {
 
-                    case global_enabled:
-                        // Global, already handled, to get out error free
-                        break;
+                        case global_enabled:
+                            // Global, already handled, to get out error free
+                            break;
 
-                    // Virtualizer
-                    case virt_enabled:
-                        final Virtualizer virtualizerEffect = getVirtualizerEffect(audioSession);
-                        if (virtualizerEffect != null) {
-                            virtualizerEffect.setEnabled(value);
-                            enabled = virtualizerEffect.getEnabled();
-                        }
-                        break;
+                        // Virtualizer
+                        case virt_enabled:
+                            final Virtualizer virtualizerEffect = getVirtualizerEffect(audioSession);
+                            if (virtualizerEffect != null) {
+                                virtualizerEffect.setEnabled(value);
+                                enabled = virtualizerEffect.getEnabled();
+                            }
+                            break;
 
-                    // BassBoost
-                    case bb_enabled:
-                        final BassBoost bassBoostEffect = getBassBoostEffect(audioSession);
-                        if (bassBoostEffect != null) {
-                            bassBoostEffect.setEnabled(value);
-                            enabled = bassBoostEffect.getEnabled();
-                        }
-                        break;
+                        // BassBoost
+                        case bb_enabled:
+                            final BassBoost bassBoostEffect = getBassBoostEffect(audioSession);
+                            if (bassBoostEffect != null) {
+                                bassBoostEffect.setEnabled(value);
+                                enabled = bassBoostEffect.getEnabled();
+                            }
+                            break;
 
-                    // Equalizer
-                    case eq_enabled:
-                        final Equalizer equalizerEffect = getEqualizerEffect(audioSession);
-                        if (equalizerEffect != null) {
-                            equalizerEffect.setEnabled(value);
-                            enabled = equalizerEffect.getEnabled();
-                        }
-                        break;
+                        // Equalizer
+                        case eq_enabled:
+                            final Equalizer equalizerEffect = getEqualizerEffect(audioSession);
+                            if (equalizerEffect != null) {
+                                equalizerEffect.setEnabled(value);
+                                enabled = equalizerEffect.getEnabled();
+                            }
+                            break;
 
-                    // PresetReverb
-                    case pr_enabled:
-                        // XXX: Preset Reverb not used for the moment, so commented out the effect
-                        // creation to not use MIPS
-                        // final PresetReverb presetReverbEffect =
-                        // getPresetReverbEffect(audioSession);
-                        // if (presetReverbEffect != null) {
-                        // presetReverbEffect.setEnabled(value);
-                        // enabled = presetReverbEffect.getEnabled();
-                        // }
-                        break;
+                        // PresetReverb
+                        case pr_enabled:
+                            // XXX: Preset Reverb not used for the moment, so commented out the effect
+                            // creation to not use MIPS
+                            // final PresetReverb presetReverbEffect =
+                            // getPresetReverbEffect(audioSession);
+                            // if (presetReverbEffect != null) {
+                            // presetReverbEffect.setEnabled(value);
+                            // enabled = presetReverbEffect.getEnabled();
+                            // }
+                            break;
 
-                    default:
-                        Log.e(TAG, "Unknown/unsupported key " + key);
-                        return;
+                        default:
+                            Log.e(TAG, "Unknown/unsupported key " + key);
+                            return;
                     }
                 }
 
@@ -519,13 +483,12 @@ public class ControlPanelEffect {
      *
      * @param context
      * @param packageName
-     * @param audioSession
-     *            System wide unique audio session identifier.
+     * @param audioSession System wide unique audio session identifier.
      * @param key
      * @return parameter value
      */
     public static Boolean getParameterBoolean(final Context context, final String packageName,
-            final int audioSession, final Key key) {
+                                              final int audioSession, final Key key) {
         final SharedPreferences prefs = context.getSharedPreferences(packageName,
                 Context.MODE_PRIVATE);
         boolean value = false;
@@ -545,14 +508,13 @@ public class ControlPanelEffect {
      *
      * @param context
      * @param packageName
-     * @param audioSession
-     *            System wide unique audio session identifier.
+     * @param audioSession System wide unique audio session identifier.
      * @param key
      * @param arg0
      * @param arg1
      */
     public static void setParameterInt(final Context context, final String packageName,
-            final int audioSession, final Key key, final int arg0, final int arg1) {
+                                       final int audioSession, final Key key, final int arg0, final int arg1) {
         String strKey = key.toString();
         int value = arg0;
 
@@ -567,188 +529,188 @@ public class ControlPanelEffect {
 
                 switch (key) {
 
-                // Virtualizer
-                case virt_strength: {
-                    final Virtualizer virtualizerEffect = getVirtualizerEffect(audioSession);
-                    if (virtualizerEffect != null) {
-                        virtualizerEffect.setStrength((short) value);
-                        value = virtualizerEffect.getRoundedStrength();
+                    // Virtualizer
+                    case virt_strength: {
+                        final Virtualizer virtualizerEffect = getVirtualizerEffect(audioSession);
+                        if (virtualizerEffect != null) {
+                            virtualizerEffect.setStrength((short) value);
+                            value = virtualizerEffect.getRoundedStrength();
+                        }
+                        break;
                     }
-                    break;
-                }
                     // BassBoost
-                case bb_strength: {
-                    final BassBoost bassBoostEffect = getBassBoostEffect(audioSession);
-                    if (bassBoostEffect != null) {
-                        bassBoostEffect.setStrength((short) value);
-                        value = bassBoostEffect.getRoundedStrength();
+                    case bb_strength: {
+                        final BassBoost bassBoostEffect = getBassBoostEffect(audioSession);
+                        if (bassBoostEffect != null) {
+                            bassBoostEffect.setStrength((short) value);
+                            value = bassBoostEffect.getRoundedStrength();
+                        }
+                        break;
                     }
-                    break;
-                }
                     // Equalizer
-                case eq_band_level: {
-                    if (arg1 == DUMMY_ARGUMENT) {
-                        throw new IllegalArgumentException("Dummy arg passed.");
+                    case eq_band_level: {
+                        if (arg1 == DUMMY_ARGUMENT) {
+                            throw new IllegalArgumentException("Dummy arg passed.");
+                        }
+                        final short band = (short) arg1;
+                        strKey = strKey + band;
+                        final Equalizer equalizerEffect = getEqualizerEffect(audioSession);
+                        if (equalizerEffect != null) {
+                            equalizerEffect.setBandLevel(band, (short) value);
+                            value = equalizerEffect.getBandLevel(band);
+                            // save band level in User preset
+                            editor.putInt(Key.eq_preset_user_band_level.toString() + band, value);
+                        }
+                        break;
                     }
-                    final short band = (short) arg1;
-                    strKey = strKey + band;
-                    final Equalizer equalizerEffect = getEqualizerEffect(audioSession);
-                    if (equalizerEffect != null) {
-                        equalizerEffect.setBandLevel(band, (short) value);
-                        value = equalizerEffect.getBandLevel(band);
-                        // save band level in User preset
-                        editor.putInt(Key.eq_preset_user_band_level.toString() + band, value);
+                    case eq_current_preset: {
+                        final Equalizer equalizerEffect = getEqualizerEffect(audioSession);
+                        if (equalizerEffect != null) {
+                            final short preset = (short) value;
+                            final int numBands = prefs.getInt(Key.eq_num_bands.toString(),
+                                    EQUALIZER_NUMBER_BANDS_DEFAULT);
+                            final int numPresets = prefs.getInt(Key.eq_num_presets.toString(),
+                                    EQUALIZER_NUMBER_PRESETS_DEFAULT);
+
+                            if (preset < numPresets) {
+                                // OpenSL ES EQ Effect presets
+                                equalizerEffect.usePreset(preset);
+                                value = equalizerEffect.getCurrentPreset();
+                            } else {
+                                final short[] eQPresetCIExtremeBandLevelDefault = Arrays.copyOf(
+                                        EQUALIZER_PRESET_CIEXTREME_BAND_LEVEL, numBands);
+                                final short[] eQPresetUserBandLevelDefault = Arrays.copyOf(
+                                        EQUALIZER_PRESET_USER_BAND_LEVEL_DEFAULT, numBands);
+                                // Set the band levels manually for custom presets
+                                for (short band = 0; band < numBands; band++) {
+                                    short bandLevel = 0;
+                                    if (preset == numPresets) {
+                                        // CI EXTREME
+                                        bandLevel = (short) prefs.getInt(
+                                                Key.eq_preset_ci_extreme_band_level.toString() + band,
+                                                eQPresetCIExtremeBandLevelDefault[band]);
+                                    } else {
+                                        // User
+                                        bandLevel = (short) prefs.getInt(
+                                                Key.eq_preset_user_band_level.toString() + band,
+                                                eQPresetUserBandLevelDefault[band]);
+                                    }
+                                    equalizerEffect.setBandLevel(band, bandLevel);
+                                }
+                            }
+
+                            // update band levels
+                            for (short band = 0; band < numBands; band++) {
+                                final short level = equalizerEffect.getBandLevel(band);
+                                editor.putInt(Key.eq_band_level.toString() + band, level);
+                            }
+                        }
+                        break;
                     }
-                    break;
+                    case eq_preset_user_band_level:
+                        // Fall through
+                    case eq_preset_user_band_level_default:
+                        // Fall through
+                    case eq_preset_ci_extreme_band_level: {
+                        if (arg1 == DUMMY_ARGUMENT) {
+                            throw new IllegalArgumentException("Dummy arg passed.");
+                        }
+                        final short band = (short) arg1;
+                        strKey = strKey + band;
+                        break;
+                    }
+                    case pr_current_preset:
+                        // XXX: Preset Reverb not used for the moment, so commented out the effect
+                        // creation to not use MIPS
+                        // final PresetReverb presetReverbEffect = getPresetReverbEffect(audioSession);
+                        // if (presetReverbEffect != null) {
+                        // presetReverbEffect.setPreset((short) value);
+                        // value = presetReverbEffect.getPreset();
+                        // }
+                        break;
+                    default:
+                        Log.e(TAG, "setParameterInt: Unknown/unsupported key " + key);
+                        return;
                 }
-                case eq_current_preset: {
-                    final Equalizer equalizerEffect = getEqualizerEffect(audioSession);
-                    if (equalizerEffect != null) {
+            } else {
+                switch (key) {
+                    // Virtualizer
+                    case virt_strength:
+                        // Do nothing
+                        break;
+                    case virt_type:
+                        // Do nothing
+                        break;
+
+                    // BassBoost
+                    case bb_strength:
+                        // Do nothing
+                        break;
+
+                    // Equalizer
+                    case eq_band_level: {
+                        if (arg1 == DUMMY_ARGUMENT) {
+                            throw new IllegalArgumentException("Dummy arg passed.");
+                        }
+                        final short band = (short) arg1;
+                        strKey = strKey + band;
+
+                        editor.putInt(Key.eq_preset_user_band_level.toString() + band, value);
+                        break;
+                    }
+                    case eq_current_preset: {
                         final short preset = (short) value;
                         final int numBands = prefs.getInt(Key.eq_num_bands.toString(),
                                 EQUALIZER_NUMBER_BANDS_DEFAULT);
                         final int numPresets = prefs.getInt(Key.eq_num_presets.toString(),
                                 EQUALIZER_NUMBER_PRESETS_DEFAULT);
 
-                        if (preset < numPresets) {
-                            // OpenSL ES EQ Effect presets
-                            equalizerEffect.usePreset(preset);
-                            value = equalizerEffect.getCurrentPreset();
-                        } else {
-                            final short[] eQPresetCIExtremeBandLevelDefault = Arrays.copyOf(
-                                    EQUALIZER_PRESET_CIEXTREME_BAND_LEVEL, numBands);
-                            final short[] eQPresetUserBandLevelDefault = Arrays.copyOf(
-                                    EQUALIZER_PRESET_USER_BAND_LEVEL_DEFAULT, numBands);
-                            // Set the band levels manually for custom presets
-                            for (short band = 0; band < numBands; band++) {
-                                short bandLevel = 0;
-                                if (preset == numPresets) {
-                                    // CI EXTREME
-                                    bandLevel = (short) prefs.getInt(
-                                            Key.eq_preset_ci_extreme_band_level.toString() + band,
-                                            eQPresetCIExtremeBandLevelDefault[band]);
-                                } else {
-                                    // User
-                                    bandLevel = (short) prefs.getInt(
-                                            Key.eq_preset_user_band_level.toString() + band,
-                                            eQPresetUserBandLevelDefault[band]);
-                                }
-                                equalizerEffect.setBandLevel(band, bandLevel);
-                            }
-                        }
-
-                        // update band levels
+                        final short[][] eQPresetOpenSLESBandLevelDefault = Arrays.copyOf(
+                                mEQPresetOpenSLESBandLevel, numPresets);
+                        final short[] eQPresetCIExtremeBandLevelDefault = Arrays.copyOf(
+                                EQUALIZER_PRESET_CIEXTREME_BAND_LEVEL, numBands);
+                        final short[] eQPresetUserBandLevelDefault = Arrays.copyOf(
+                                EQUALIZER_PRESET_USER_BAND_LEVEL_DEFAULT, numBands);
                         for (short band = 0; band < numBands; band++) {
-                            final short level = equalizerEffect.getBandLevel(band);
-                            editor.putInt(Key.eq_band_level.toString() + band, level);
+                            short bandLevel = 0;
+                            if (preset < numPresets) {
+                                // OpenSL ES EQ Effect presets
+                                bandLevel = (short) prefs.getInt(
+                                        Key.eq_preset_opensl_es_band_level.toString() + preset + "_"
+                                                + band, eQPresetOpenSLESBandLevelDefault[preset][band]);
+                            } else if (preset == numPresets) {
+                                // CI EXTREME
+                                bandLevel = (short) prefs.getInt(
+                                        Key.eq_preset_ci_extreme_band_level.toString() + band,
+                                        eQPresetCIExtremeBandLevelDefault[band]);
+                            } else {
+                                // User
+                                bandLevel = (short) prefs.getInt(
+                                        Key.eq_preset_user_band_level.toString() + band,
+                                        eQPresetUserBandLevelDefault[band]);
+                            }
+                            editor.putInt(Key.eq_band_level.toString() + band, bandLevel);
                         }
+                        break;
                     }
-                    break;
-                }
-                case eq_preset_user_band_level:
-                    // Fall through
-                case eq_preset_user_band_level_default:
-                    // Fall through
-                case eq_preset_ci_extreme_band_level: {
-                    if (arg1 == DUMMY_ARGUMENT) {
-                        throw new IllegalArgumentException("Dummy arg passed.");
-                    }
-                    final short band = (short) arg1;
-                    strKey = strKey + band;
-                    break;
-                }
-                case pr_current_preset:
-                    // XXX: Preset Reverb not used for the moment, so commented out the effect
-                    // creation to not use MIPS
-                    // final PresetReverb presetReverbEffect = getPresetReverbEffect(audioSession);
-                    // if (presetReverbEffect != null) {
-                    // presetReverbEffect.setPreset((short) value);
-                    // value = presetReverbEffect.getPreset();
-                    // }
-                    break;
-                default:
-                    Log.e(TAG, "setParameterInt: Unknown/unsupported key " + key);
-                    return;
-                }
-            } else {
-                switch (key) {
-                // Virtualizer
-                case virt_strength:
-                    // Do nothing
-                    break;
-                case virt_type:
-                    // Do nothing
-                    break;
-
-                // BassBoost
-                case bb_strength:
-                    // Do nothing
-                    break;
-
-                // Equalizer
-                case eq_band_level: {
-                    if (arg1 == DUMMY_ARGUMENT) {
-                        throw new IllegalArgumentException("Dummy arg passed.");
-                    }
-                    final short band = (short) arg1;
-                    strKey = strKey + band;
-
-                    editor.putInt(Key.eq_preset_user_band_level.toString() + band, value);
-                    break;
-                }
-                case eq_current_preset: {
-                    final short preset = (short) value;
-                    final int numBands = prefs.getInt(Key.eq_num_bands.toString(),
-                            EQUALIZER_NUMBER_BANDS_DEFAULT);
-                    final int numPresets = prefs.getInt(Key.eq_num_presets.toString(),
-                            EQUALIZER_NUMBER_PRESETS_DEFAULT);
-
-                    final short[][] eQPresetOpenSLESBandLevelDefault = Arrays.copyOf(
-                            mEQPresetOpenSLESBandLevel, numPresets);
-                    final short[] eQPresetCIExtremeBandLevelDefault = Arrays.copyOf(
-                            EQUALIZER_PRESET_CIEXTREME_BAND_LEVEL, numBands);
-                    final short[] eQPresetUserBandLevelDefault = Arrays.copyOf(
-                            EQUALIZER_PRESET_USER_BAND_LEVEL_DEFAULT, numBands);
-                    for (short band = 0; band < numBands; band++) {
-                        short bandLevel = 0;
-                        if (preset < numPresets) {
-                            // OpenSL ES EQ Effect presets
-                            bandLevel = (short) prefs.getInt(
-                                    Key.eq_preset_opensl_es_band_level.toString() + preset + "_"
-                                            + band, eQPresetOpenSLESBandLevelDefault[preset][band]);
-                        } else if (preset == numPresets) {
-                            // CI EXTREME
-                            bandLevel = (short) prefs.getInt(
-                                    Key.eq_preset_ci_extreme_band_level.toString() + band,
-                                    eQPresetCIExtremeBandLevelDefault[band]);
-                        } else {
-                            // User
-                            bandLevel = (short) prefs.getInt(
-                                    Key.eq_preset_user_band_level.toString() + band,
-                                    eQPresetUserBandLevelDefault[band]);
+                    case eq_preset_user_band_level:
+                        // Fall through
+                    case eq_preset_user_band_level_default:
+                        // Fall through
+                    case eq_preset_ci_extreme_band_level: {
+                        if (arg1 == DUMMY_ARGUMENT) {
+                            throw new IllegalArgumentException("Dummy arg passed.");
                         }
-                        editor.putInt(Key.eq_band_level.toString() + band, bandLevel);
+                        final short band = (short) arg1;
+                        strKey = strKey + band;
+                        break;
                     }
-                    break;
-                }
-                case eq_preset_user_band_level:
-                    // Fall through
-                case eq_preset_user_band_level_default:
-                    // Fall through
-                case eq_preset_ci_extreme_band_level: {
-                    if (arg1 == DUMMY_ARGUMENT) {
-                        throw new IllegalArgumentException("Dummy arg passed.");
-                    }
-                    final short band = (short) arg1;
-                    strKey = strKey + band;
-                    break;
-                }
-                case pr_current_preset:
-                    // Do nothing
-                    break;
-                default:
-                    Log.e(TAG, "setParameterInt: Unknown/unsupported key " + key);
-                    return;
+                    case pr_current_preset:
+                        // Do nothing
+                        break;
+                    default:
+                        Log.e(TAG, "setParameterInt: Unknown/unsupported key " + key);
+                        return;
                 }
             }
 
@@ -767,13 +729,12 @@ public class ControlPanelEffect {
      *
      * @param context
      * @param packageName
-     * @param audioSession
-     *            System wide unique audio session identifier.
+     * @param audioSession System wide unique audio session identifier.
      * @param key
      * @param arg
      */
     public static void setParameterInt(final Context context, final String packageName,
-            final int audioSession, final Key key, final int arg) {
+                                       final int audioSession, final Key key, final int arg) {
         setParameterInt(context, packageName, audioSession, key, arg, DUMMY_ARGUMENT);
     }
 
@@ -782,13 +743,12 @@ public class ControlPanelEffect {
      *
      * @param context
      * @param packageName
-     * @param audioSession
-     *            System wide unique audio session identifier.
+     * @param audioSession System wide unique audio session identifier.
      * @param key
      * @return parameter value
      */
     public static int getParameterInt(final Context context, final String packageName,
-            final int audioSession, final String key) {
+                                      final int audioSession, final String key) {
         int value = 0;
 
         try {
@@ -807,13 +767,12 @@ public class ControlPanelEffect {
      *
      * @param context
      * @param packageName
-     * @param audioSession
-     *            System wide unique audio session identifier.
+     * @param audioSession System wide unique audio session identifier.
      * @param key
      * @return parameter value
      */
     public static int getParameterInt(final Context context, final String packageName,
-            final int audioSession, final Key key) {
+                                      final int audioSession, final Key key) {
         return getParameterInt(context, packageName, audioSession, key.toString());
     }
 
@@ -822,15 +781,14 @@ public class ControlPanelEffect {
      *
      * @param context
      * @param packageName
-     * @param audioSession
-     *            System wide unique audio session identifier.
+     * @param audioSession System wide unique audio session identifier.
      * @param audioSession
      * @param key
      * @param arg
      * @return parameter value
      */
     public static int getParameterInt(final Context context, final String packageName,
-            final int audioSession, final Key key, final int arg) {
+                                      final int audioSession, final Key key, final int arg) {
         return getParameterInt(context, packageName, audioSession, key.toString() + arg);
     }
 
@@ -839,8 +797,7 @@ public class ControlPanelEffect {
      *
      * @param context
      * @param packageName
-     * @param audioSession
-     *            System wide unique audio session identifier.
+     * @param audioSession System wide unique audio session identifier.
      * @param audioSession
      * @param key
      * @param arg0
@@ -848,7 +805,7 @@ public class ControlPanelEffect {
      * @return parameter value
      */
     public static int getParameterInt(final Context context, final String packageName,
-            final int audioSession, final Key key, final int arg0, final int arg1) {
+                                      final int audioSession, final Key key, final int arg0, final int arg1) {
         return getParameterInt(context, packageName, audioSession, key.toString() + arg0 + "_"
                 + arg1);
     }
@@ -858,13 +815,12 @@ public class ControlPanelEffect {
      *
      * @param context
      * @param packageName
-     * @param audioSession
-     *            System wide unique audio session identifier.
+     * @param audioSession System wide unique audio session identifier.
      * @param key
      * @return parameter value array
      */
     public static int[] getParameterIntArray(final Context context, final String packageName,
-            final int audioSession, final Key key) {
+                                             final int audioSession, final Key key) {
         final SharedPreferences prefs = context.getSharedPreferences(packageName,
                 Context.MODE_PRIVATE);
 
@@ -872,26 +828,26 @@ public class ControlPanelEffect {
         try {
             // Get effect parameters
             switch (key) {
-            case eq_level_range: {
-                intArray = new int[2];
-                break;
-            }
-            case eq_center_freq:
-                // Fall through
-            case eq_band_level:
-                // Fall through
-            case eq_preset_user_band_level:
-                // Fall through
-            case eq_preset_user_band_level_default:
-                // Fall through
-            case eq_preset_ci_extreme_band_level: {
-                final int numBands = prefs.getInt(Key.eq_num_bands.toString(), 0);
-                intArray = new int[numBands];
-                break;
-            }
-            default:
-                Log.e(TAG, "getParameterIntArray: Unknown/unsupported key " + key);
-                return null;
+                case eq_level_range: {
+                    intArray = new int[2];
+                    break;
+                }
+                case eq_center_freq:
+                    // Fall through
+                case eq_band_level:
+                    // Fall through
+                case eq_preset_user_band_level:
+                    // Fall through
+                case eq_preset_user_band_level_default:
+                    // Fall through
+                case eq_preset_ci_extreme_band_level: {
+                    final int numBands = prefs.getInt(Key.eq_num_bands.toString(), 0);
+                    intArray = new int[numBands];
+                    break;
+                }
+                default:
+                    Log.e(TAG, "getParameterIntArray: Unknown/unsupported key " + key);
+                    return null;
             }
 
             for (int i = 0; i < intArray.length; i++) {
@@ -910,13 +866,12 @@ public class ControlPanelEffect {
      *
      * @param context
      * @param packageName
-     * @param audioSession
-     *            System wide unique audio session identifier.
+     * @param audioSession System wide unique audio session identifier.
      * @param key
      * @return parameter value
      */
     public static String getParameterString(final Context context, final String packageName,
-            final int audioSession, final String key) {
+                                            final int audioSession, final String key) {
         String value = "";
         try {
             final SharedPreferences prefs = context.getSharedPreferences(packageName,
@@ -937,13 +892,12 @@ public class ControlPanelEffect {
      *
      * @param context
      * @param packageName
-     * @param audioSession
-     *            System wide unique audio session identifier.
+     * @param audioSession System wide unique audio session identifier.
      * @param key
      * @return parameter value
      */
     public static String getParameterString(final Context context, final String packageName,
-            final int audioSession, final Key key) {
+                                            final int audioSession, final Key key) {
         return getParameterString(context, packageName, audioSession, key.toString());
     }
 
@@ -952,13 +906,12 @@ public class ControlPanelEffect {
      *
      * @param context
      * @param packageName
-     * @param audioSession
-     *            System wide unique audio session identifier.
+     * @param audioSession System wide unique audio session identifier.
      * @param args
      * @return parameter value
      */
     public static String getParameterString(final Context context, final String packageName,
-            final int audioSession, final Key key, final int arg) {
+                                            final int audioSession, final Key key, final int arg) {
         return getParameterString(context, packageName, audioSession, key.toString() + arg);
     }
 
@@ -968,11 +921,10 @@ public class ControlPanelEffect {
      *
      * @param context
      * @param packageName
-     * @param audioSession
-     *            System wide unique audio session identifier.
+     * @param audioSession System wide unique audio session identifier.
      */
     public static void openSession(final Context context, final String packageName,
-            final int audioSession) {
+                                   final int audioSession) {
         Log.v(TAG, "openSession(" + context + ", " + packageName + ", " + audioSession + ")");
         final String methodTag = "openSession: ";
 
@@ -1029,7 +981,7 @@ public class ControlPanelEffect {
                 final boolean isEnabled = prefs.getBoolean(Key.virt_enabled.toString(),
                         VIRTUALIZER_ENABLED_DEFAULT);
                 int defaultstrength = isExistingAudioSession ? VIRTUALIZER_STRENGTH_DEFAULT :
-                    virtualizerEffect.getRoundedStrength();
+                        virtualizerEffect.getRoundedStrength();
                 final int strength = prefs.getInt(Key.virt_strength.toString(), defaultstrength);
                 // init settings
                 Virtualizer.Settings settings = new Virtualizer.Settings("Virtualizer;strength="
@@ -1263,11 +1215,10 @@ public class ControlPanelEffect {
      *
      * @param context
      * @param packageName
-     * @param audioSession
-     *            System wide unique audio session identifier.
+     * @param audioSession System wide unique audio session identifier.
      */
     public static void closeSession(final Context context, final String packageName,
-            final int audioSession) {
+                                    final int audioSession) {
         Log.v(TAG, "closeSession(" + context + ", " + packageName + ", " + audioSession + ")");
 
         // PresetReverb
@@ -1301,12 +1252,11 @@ public class ControlPanelEffect {
      *
      * @param context
      * @param packageName
-     * @param audioSession
-     *            System wide unique audio session identifier.
+     * @param audioSession System wide unique audio session identifier.
      * @param enabled
      */
     public static void setEnabledAll(final Context context, final String packageName,
-            final int audioSession, final boolean enabled) {
+                                     final int audioSession, final boolean enabled) {
         initEffectsPreferences(context, packageName, audioSession);
         setParameterBoolean(context, packageName, audioSession, Key.global_enabled, enabled);
     }
@@ -1315,13 +1265,13 @@ public class ControlPanelEffect {
      * Gets the virtualizer effect for the given audio session. If the effect on the session doesn't
      * exist yet, create it and add to collection.
      *
-     * @param audioSession
-     *            System wide unique audio session identifier.
+     * @param audioSession System wide unique audio session identifier.
      * @return virtualizerEffect
      */
     private static Virtualizer getVirtualizerEffectNoCreate(final int audioSession) {
         return mVirtualizerInstances.get(audioSession);
     }
+
     private static Virtualizer getVirtualizerEffect(final int audioSession) {
         Virtualizer virtualizerEffect = getVirtualizerEffectNoCreate(audioSession);
         if (virtualizerEffect == null) {
@@ -1348,13 +1298,13 @@ public class ControlPanelEffect {
      * Gets the bass boost effect for the given audio session. If the effect on the session doesn't
      * exist yet, create it and add to collection.
      *
-     * @param audioSession
-     *            System wide unique audio session identifier.
+     * @param audioSession System wide unique audio session identifier.
      * @return bassBoostEffect
      */
     private static BassBoost getBassBoostEffectNoCreate(final int audioSession) {
         return mBassBoostInstances.get(audioSession);
     }
+
     private static BassBoost getBassBoostEffect(final int audioSession) {
 
         BassBoost bassBoostEffect = getBassBoostEffectNoCreate(audioSession);
@@ -1381,13 +1331,13 @@ public class ControlPanelEffect {
      * Gets the equalizer effect for the given audio session. If the effect on the session doesn't
      * exist yet, create it and add to collection.
      *
-     * @param audioSession
-     *            System wide unique audio session identifier.
+     * @param audioSession System wide unique audio session identifier.
      * @return equalizerEffect
      */
     private static Equalizer getEqualizerEffectNoCreate(final int audioSession) {
         return mEQInstances.get(audioSession);
     }
+
     private static Equalizer getEqualizerEffect(final int audioSession) {
         Equalizer equalizerEffect = getEqualizerEffectNoCreate(audioSession);
         if (equalizerEffect == null) {
@@ -1407,6 +1357,32 @@ public class ControlPanelEffect {
             }
         }
         return equalizerEffect;
+    }
+
+    /**
+     * The control mode specifies if control panel updates effects and preferences or only
+     * preferences.
+     */
+    static enum ControlMode {
+        /**
+         * Control panel updates effects and preferences. Applicable when audio session is delivered
+         * by user.
+         */
+        CONTROL_EFFECTS,
+        /**
+         * Control panel only updates preferences. Applicable when there was no audio or invalid
+         * session provided by user.
+         */
+        CONTROL_PREFERENCES
+    }
+
+    static enum Key {
+        global_enabled, virt_enabled, virt_strength_supported, virt_strength, virt_type, bb_enabled,
+        bb_strength, te_enabled, te_strength, avl_enabled, lm_enabled, lm_strength, eq_enabled,
+        eq_num_bands, eq_level_range, eq_center_freq, eq_band_level, eq_num_presets, eq_preset_name,
+        eq_preset_user_band_level, eq_preset_user_band_level_default,
+        eq_preset_opensl_es_band_level, eq_preset_ci_extreme_band_level, eq_current_preset,
+        pr_enabled, pr_current_preset
     }
 
     // XXX: Preset Reverb not used for the moment, so commented out the effect creation to not

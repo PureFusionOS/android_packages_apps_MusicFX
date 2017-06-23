@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<!-- Copyright (C) 2010-2011 The Android Open Source Project
+<?xml version="1.0" encoding="utf-8" ?><!-- Copyright (C) 2010-2011 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -14,23 +13,22 @@
      limitations under the License.
 -->
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/noEffectsTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_gravity="center"
+        android:layout_weight="1"
         android:ellipsize="marquee"
         android:fadingEdge="horizontal"
-        android:layout_gravity="center"
         android:gravity="center"
         android:text="@string/no_effects"
-        android:layout_weight="1"
+        android:textAppearance="?android:attr/textAppearanceLarge"
         android:visibility="gone" />
 
     <FrameLayout
@@ -42,15 +40,15 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
             android:layout_gravity="center"
+            android:gravity="center_vertical"
             android:orientation="vertical">
 
-            <Spinner android:id="@+id/eqSpinner"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:drawSelectorOnTop="true"
-            />
+            <Spinner
+                android:id="@+id/eqSpinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawSelectorOnTop="true" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -68,78 +66,83 @@
                         android:id="@+id/bBLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:minHeight="?android:attr/listPreferredItemHeight"
-                        android:gravity="center_vertical"
-                        android:paddingRight="?android:attr/scrollbarSize"
+                        android:layout_marginBottom="6dip"
                         android:layout_marginLeft="15dip"
                         android:layout_marginRight="6dip"
                         android:layout_marginTop="6dip"
-                        android:layout_marginBottom="6dip"
+                        android:background="@android:drawable/list_selector_background"
+                        android:gravity="center_vertical"
+                        android:minHeight="?android:attr/listPreferredItemHeight"
                         android:orientation="vertical"
-                        android:background="@android:drawable/list_selector_background">
+                        android:paddingRight="?android:attr/scrollbarSize">
+
                         <TextView
                             android:id="@+id/bBStrengthText"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:textAppearance="?android:attr/textAppearanceLarge"
                             android:ellipsize="marquee"
                             android:fadingEdge="horizontal"
-                            android:text="@string/bass_boost_strength" />
+                            android:text="@string/bass_boost_strength"
+                            android:textAppearance="?android:attr/textAppearanceLarge" />
+
                         <SeekBar
                             android:id="@+id/bBStrengthSeekBar"
                             android:layout_width="170dip"
                             android:layout_height="wrap_content"
-                            android:paddingTop="2dip"
                             android:paddingLeft="20dip"
-                            android:paddingRight="20dip" />
+                            android:paddingRight="20dip"
+                            android:paddingTop="2dip" />
                     </LinearLayout>
 
                     <LinearLayout
                         android:id="@+id/vILayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:minHeight="?android:attr/listPreferredItemHeight"
-                        android:gravity="center_vertical"
-                        android:paddingRight="?android:attr/scrollbarSize"
+                        android:layout_marginBottom="6dip"
                         android:layout_marginLeft="15dip"
                         android:layout_marginRight="6dip"
                         android:layout_marginTop="6dip"
-                        android:layout_marginBottom="6dip"
+                        android:background="@android:drawable/list_selector_background"
+                        android:gravity="center_vertical"
+                        android:minHeight="?android:attr/listPreferredItemHeight"
                         android:orientation="vertical"
-                        android:background="@android:drawable/list_selector_background">
+                        android:paddingRight="?android:attr/scrollbarSize">
+
                         <TextView
                             android:id="@+id/vIStrengthText"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:textAppearance="?android:attr/textAppearanceLarge"
                             android:ellipsize="marquee"
                             android:fadingEdge="horizontal"
-                            android:text="@string/virtualizer_strength" />
+                            android:text="@string/virtualizer_strength"
+                            android:textAppearance="?android:attr/textAppearanceLarge" />
+
                         <SeekBar
                             android:id="@+id/vIStrengthSeekBar"
                             android:layout_width="170dip"
                             android:layout_height="wrap_content"
-                            android:paddingTop="2dip"
                             android:paddingLeft="20dip"
-                            android:paddingRight="20dip" />
+                            android:paddingRight="20dip"
+                            android:paddingTop="2dip" />
+
                         <Switch
                             android:id="@+id/vIStrengthToggle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:paddingTop="2dip"
                             android:paddingLeft="20dip"
-                            android:paddingRight="20dip" />
+                            android:paddingRight="20dip"
+                            android:paddingTop="2dip" />
                     </LinearLayout>
 
-                    <Spinner android:id="@+id/prSpinner"
+                    <Spinner
+                        android:id="@+id/prSpinner"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:minHeight="?android:attr/listPreferredItemHeight"
                         android:drawSelectorOnTop="true"
-                        android:visibility="gone"
-                    />
+                        android:minHeight="?android:attr/listPreferredItemHeight"
+                        android:visibility="gone" />
 
                 </LinearLayout>
             </LinearLayout>

@@ -16,11 +16,6 @@
 
 package com.android.musicfx;
 
-import com.android.internal.app.AlertActivity;
-import com.android.internal.app.AlertController;
-import com.android.internal.app.AlertController.AlertParams.OnPrepareListViewListener;
-import com.android.musicfx.Compatibility.Service;
-
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
@@ -31,11 +26,12 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.media.audiofx.AudioEffect;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ListView;
+
+import com.android.internal.app.AlertActivity;
+import com.android.internal.app.AlertController;
+import com.android.internal.app.AlertController.AlertParams.OnPrepareListViewListener;
+import com.android.musicfx.Compatibility.Service;
 
 import java.util.List;
 
@@ -44,13 +40,22 @@ import java.util.List;
  */
 public class ControlPanelPicker extends AlertActivity implements OnClickListener, OnPrepareListViewListener {
 
-    
+
+    private DialogInterface.OnClickListener mItemClickListener =
+            new DialogInterface.OnClickListener() {
+
+                public void onClick(DialogInterface dialog, int which) {
+                    // Save the position of most recently clicked item
+                    mAlertParams.mCheckedItem = which;
+                }
+
+            };
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        String [] cols = new String [] { "_id", "title", "package", "name" };
+        String[] cols = new String[]{"_id", "title", "package", "name"};
         MatrixCursor c = new MatrixCursor(cols);
 
         PackageManager pmgr = getPackageManager();
@@ -61,12 +66,12 @@ public class ControlPanelPicker extends AlertActivity implements OnClickListener
         String savedDefName = pref.getString("defaultpanelname", null);
         int cnt = -1;
         int defpanelidx = 0;
-        for (ResolveInfo foo: ris) {
+        for (ResolveInfo foo : ris) {
             if (foo.activityInfo.name.equals(Compatibility.Redirector.class.getName())) {
                 continue;
             }
             CharSequence name = pmgr.getApplicationLabel(foo.activityInfo.applicationInfo);
-            c.addRow(new Object [] { 0, name, foo.activityInfo.packageName, foo.activityInfo.name });
+            c.addRow(new Object[]{0, name, foo.activityInfo.packageName, foo.activityInfo.name});
             cnt += 1;
             if (foo.activityInfo.name.equals(savedDefName) &&
                     foo.activityInfo.packageName.equals(savedDefPackage) &&
@@ -75,7 +80,7 @@ public class ControlPanelPicker extends AlertActivity implements OnClickListener
                 defpanelidx = cnt;
             }
         }
-        
+
         final AlertController.AlertParams p = mAlertParams;
         p.mCursor = c;
         p.mOnClickListener = mItemClickListener;
@@ -87,19 +92,9 @@ public class ControlPanelPicker extends AlertActivity implements OnClickListener
         p.mOnPrepareListViewListener = this;
         p.mTitle = getString(R.string.picker_title);
         p.mCheckedItem = defpanelidx;
-        
+
         setupAlert();
     }
-
-    private DialogInterface.OnClickListener mItemClickListener =
-        new DialogInterface.OnClickListener() {
-
-        public void onClick(DialogInterface dialog, int which) {
-            // Save the position of most recently clicked item
-            mAlertParams.mCheckedItem = which;
-        }
-        
-    };
 
     @Override
     public void onClick(DialogInterface dialog, int which) {

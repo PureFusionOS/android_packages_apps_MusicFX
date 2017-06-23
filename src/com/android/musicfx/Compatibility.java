@@ -37,11 +37,10 @@ import java.util.List;
  * Provide backwards compatibility for existing control panels.
  * There are two major parts to this:
  * - a BroadcastReceiver that listens for installed or removed packages, and
- *   enables or disables control panel receivers as needed to ensure that only
- *   one control panel package will receive the broadcasts that applications end
+ * enables or disables control panel receivers as needed to ensure that only
+ * one control panel package will receive the broadcasts that applications end
  * - a high priority control panel activity that redirects to the currently
- *   selected control panel activity
- *
+ * selected control panel activity
  */
 public class Compatibility {
 
@@ -49,6 +48,11 @@ public class Compatibility {
     // run "setprop log.tag.MusicFXCompat DEBUG" to turn on logging
     private final static boolean LOG = Log.isLoggable(TAG, Log.DEBUG);
 
+    private static void log(String out) {
+        if (LOG) {
+            Log.d(TAG, out);
+        }
+    }
 
     /**
      * This activity has an intent filter with the highest possible priority, so
@@ -153,7 +157,7 @@ public class Compatibility {
             String savedDefPackage = pref.getString("defaultpanelpackage", null);
             String savedDefName = pref.getString("defaultpanelname", null);
             log("saved default: " + savedDefName);
-            for (ResolveInfo foo: ris) {
+            for (ResolveInfo foo : ris) {
                 if (foo.activityInfo.name.equals(Compatibility.Redirector.class.getName())) {
                     log("skipping " + foo);
                     continue;
@@ -219,7 +223,7 @@ public class Compatibility {
             // broadcast to newly enabled receivers, while sending "close session" to
             // receivers that are about to be disabled. We could also consider just
             // killing the process hosting the disabled components.
-            for (ResolveInfo foo: ris) {
+            for (ResolveInfo foo : ris) {
                 ComponentName comp = new ComponentName(foo.activityInfo.packageName, foo.activityInfo.name);
                 if (foo.activityInfo.packageName.equals(defPackage)) {
                     log("enabling receiver " + foo);
@@ -233,12 +237,6 @@ public class Compatibility {
                             PackageManager.DONT_KILL_APP);
                 }
             }
-        }
-    }
-
-    private static void log(String out) {
-        if (LOG) {
-            Log.d(TAG, out);
         }
     }
 }

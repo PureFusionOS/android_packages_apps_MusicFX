@@ -16,18 +16,12 @@
 
 package com.android.musicfx;
 
-import com.android.audiofx.OpenSLESConstants;
-
 import android.app.ActionBar;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.bluetooth.BluetoothClass;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioFormat;
@@ -38,10 +32,8 @@ import android.media.audiofx.Virtualizer;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -49,9 +41,6 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Spinner;
@@ -59,9 +48,10 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.audiofx.OpenSLESConstants;
+
 import java.util.Formatter;
 import java.util.Locale;
-import java.util.UUID;
 
 /**
  *
@@ -83,7 +73,49 @@ public class ActivityMusic extends Activity implements OnSeekBarChangeListener {
      * Min levels per EQ band in millibels (1 dB = 100 mB)
      */
     private final static int EQUALIZER_MIN_LEVEL = -1000;
-
+    /**
+     * Mapping for the EQ widget ids per band
+     */
+    private static final int[][] EQViewElementIds = {
+            {R.id.EQBand0TextView, R.id.EQBand0SeekBar},
+            {R.id.EQBand1TextView, R.id.EQBand1SeekBar},
+            {R.id.EQBand2TextView, R.id.EQBand2SeekBar},
+            {R.id.EQBand3TextView, R.id.EQBand3SeekBar},
+            {R.id.EQBand4TextView, R.id.EQBand4SeekBar},
+            {R.id.EQBand5TextView, R.id.EQBand5SeekBar},
+            {R.id.EQBand6TextView, R.id.EQBand6SeekBar},
+            {R.id.EQBand7TextView, R.id.EQBand7SeekBar},
+            {R.id.EQBand8TextView, R.id.EQBand8SeekBar},
+            {R.id.EQBand9TextView, R.id.EQBand9SeekBar},
+            {R.id.EQBand10TextView, R.id.EQBand10SeekBar},
+            {R.id.EQBand11TextView, R.id.EQBand11SeekBar},
+            {R.id.EQBand12TextView, R.id.EQBand12SeekBar},
+            {R.id.EQBand13TextView, R.id.EQBand13SeekBar},
+            {R.id.EQBand14TextView, R.id.EQBand14SeekBar},
+            {R.id.EQBand15TextView, R.id.EQBand15SeekBar},
+            {R.id.EQBand16TextView, R.id.EQBand16SeekBar},
+            {R.id.EQBand17TextView, R.id.EQBand17SeekBar},
+            {R.id.EQBand18TextView, R.id.EQBand18SeekBar},
+            {R.id.EQBand19TextView, R.id.EQBand19SeekBar},
+            {R.id.EQBand20TextView, R.id.EQBand20SeekBar},
+            {R.id.EQBand21TextView, R.id.EQBand21SeekBar},
+            {R.id.EQBand22TextView, R.id.EQBand22SeekBar},
+            {R.id.EQBand23TextView, R.id.EQBand23SeekBar},
+            {R.id.EQBand24TextView, R.id.EQBand24SeekBar},
+            {R.id.EQBand25TextView, R.id.EQBand25SeekBar},
+            {R.id.EQBand26TextView, R.id.EQBand26SeekBar},
+            {R.id.EQBand27TextView, R.id.EQBand27SeekBar},
+            {R.id.EQBand28TextView, R.id.EQBand28SeekBar},
+            {R.id.EQBand29TextView, R.id.EQBand29SeekBar},
+            {R.id.EQBand30TextView, R.id.EQBand30SeekBar},
+            {R.id.EQBand31TextView, R.id.EQBand31SeekBar}};
+    /**
+     * Array containing the PR preset names.
+     */
+    private static final String[] PRESETREVERBPRESETSTRINGS = {"None", "SmallRoom", "MediumRoom",
+            "LargeRoom", "MediumHall", "LargeHall", "Plate"};
+    // Equalizer fields
+    private final SeekBar[] mEqualizerSeekBar = new SeekBar[EQUALIZER_MAX_BANDS];
     /**
      * Indicates if Virtualizer effect is supported.
      */
@@ -101,9 +133,6 @@ public class ActivityMusic extends Activity implements OnSeekBarChangeListener {
      * Indicates if Preset Reverb effect is supported.
      */
     private boolean mPresetReverbSupported;
-
-    // Equalizer fields
-    private final SeekBar[] mEqualizerSeekBar = new SeekBar[EQUALIZER_MAX_BANDS];
     private int mNumberEqualizerBands;
     private int mEqualizerMinBandLevel;
     private int mEQPresetUserPos = 1;
@@ -111,75 +140,10 @@ public class ActivityMusic extends Activity implements OnSeekBarChangeListener {
     private int mEQPresetPrevious;
     private int[] mEQPresetUserBandLevelsPrev;
     private String[] mEQPresetNames;
-
     private int mPRPreset;
     private int mPRPresetPrevious;
-
     private boolean mIsHeadsetOn = false;
     private CompoundButton mToggleSwitch;
-
-    private StringBuilder mFormatBuilder = new StringBuilder();
-    private Formatter mFormatter = new Formatter(mFormatBuilder, Locale.getDefault());
-
-    /**
-     * Mapping for the EQ widget ids per band
-     */
-    private static final int[][] EQViewElementIds = {
-            { R.id.EQBand0TextView, R.id.EQBand0SeekBar },
-            { R.id.EQBand1TextView, R.id.EQBand1SeekBar },
-            { R.id.EQBand2TextView, R.id.EQBand2SeekBar },
-            { R.id.EQBand3TextView, R.id.EQBand3SeekBar },
-            { R.id.EQBand4TextView, R.id.EQBand4SeekBar },
-            { R.id.EQBand5TextView, R.id.EQBand5SeekBar },
-            { R.id.EQBand6TextView, R.id.EQBand6SeekBar },
-            { R.id.EQBand7TextView, R.id.EQBand7SeekBar },
-            { R.id.EQBand8TextView, R.id.EQBand8SeekBar },
-            { R.id.EQBand9TextView, R.id.EQBand9SeekBar },
-            { R.id.EQBand10TextView, R.id.EQBand10SeekBar },
-            { R.id.EQBand11TextView, R.id.EQBand11SeekBar },
-            { R.id.EQBand12TextView, R.id.EQBand12SeekBar },
-            { R.id.EQBand13TextView, R.id.EQBand13SeekBar },
-            { R.id.EQBand14TextView, R.id.EQBand14SeekBar },
-            { R.id.EQBand15TextView, R.id.EQBand15SeekBar },
-            { R.id.EQBand16TextView, R.id.EQBand16SeekBar },
-            { R.id.EQBand17TextView, R.id.EQBand17SeekBar },
-            { R.id.EQBand18TextView, R.id.EQBand18SeekBar },
-            { R.id.EQBand19TextView, R.id.EQBand19SeekBar },
-            { R.id.EQBand20TextView, R.id.EQBand20SeekBar },
-            { R.id.EQBand21TextView, R.id.EQBand21SeekBar },
-            { R.id.EQBand22TextView, R.id.EQBand22SeekBar },
-            { R.id.EQBand23TextView, R.id.EQBand23SeekBar },
-            { R.id.EQBand24TextView, R.id.EQBand24SeekBar },
-            { R.id.EQBand25TextView, R.id.EQBand25SeekBar },
-            { R.id.EQBand26TextView, R.id.EQBand26SeekBar },
-            { R.id.EQBand27TextView, R.id.EQBand27SeekBar },
-            { R.id.EQBand28TextView, R.id.EQBand28SeekBar },
-            { R.id.EQBand29TextView, R.id.EQBand29SeekBar },
-            { R.id.EQBand30TextView, R.id.EQBand30SeekBar },
-            { R.id.EQBand31TextView, R.id.EQBand31SeekBar } };
-
-    // Preset Reverb fields
-    /**
-     * Array containing the PR preset names.
-     */
-    private static final String[] PRESETREVERBPRESETSTRINGS = { "None", "SmallRoom", "MediumRoom",
-            "LargeRoom", "MediumHall", "LargeHall", "Plate" };
-
-    /**
-     * Context field
-     */
-    private Context mContext;
-
-    /**
-     * Calling package name field
-     */
-    private String mCallingPackageName = "empty";
-
-    /**
-     * Audio session field
-     */
-    private int mAudioSession = AudioEffect.ERROR_BAD_VALUE;
-
     // Broadcast receiver to handle wired and Bluetooth A2dp headset events
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
@@ -214,6 +178,38 @@ public class ActivityMusic extends Activity implements OnSeekBarChangeListener {
             }
         }
     };
+
+    // Preset Reverb fields
+    private StringBuilder mFormatBuilder = new StringBuilder();
+    private Formatter mFormatter = new Formatter(mFormatBuilder, Locale.getDefault());
+    /**
+     * Context field
+     */
+    private Context mContext;
+    /**
+     * Calling package name field
+     */
+    private String mCallingPackageName = "empty";
+    /**
+     * Audio session field
+     */
+    private int mAudioSession = AudioEffect.ERROR_BAD_VALUE;
+
+    private static boolean isVirtualizerTransauralSupported() {
+        Virtualizer virt = null;
+        boolean transauralSupported = false;
+        try {
+            virt = new Virtualizer(0, android.media.AudioSystem.newAudioSessionId());
+            transauralSupported = virt.canVirtualize(AudioFormat.CHANNEL_OUT_STEREO,
+                    Virtualizer.VIRTUALIZATION_MODE_TRANSAURAL);
+        } catch (Exception e) {
+        } finally {
+            if (virt != null) {
+                virt.release();
+            }
+        }
+        return transauralSupported;
+    }
 
     /*
      * Declares and initializes all objects and widgets in the layouts and the CheckBox and SeekBar
@@ -298,7 +294,7 @@ public class ActivityMusic extends Activity implements OnSeekBarChangeListener {
             mToggleSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(final CompoundButton buttonView,
-                        final boolean isChecked) {
+                                             final boolean isChecked) {
 
                     // set parameter and state
                     ControlPanelEffect.setParameterBoolean(mContext, mCallingPackageName,
@@ -336,7 +332,7 @@ public class ActivityMusic extends Activity implements OnSeekBarChangeListener {
 
                     @Override
                     public void onProgressChanged(final SeekBar seekBar, final int progress,
-                            final boolean fromUser) {
+                                                  final boolean fromUser) {
                         // set parameter and state
                         ControlPanelEffect.setParameterInt(mContext, mCallingPackageName,
                                 mAudioSession, ControlPanelEffect.Key.virt_strength, progress);
@@ -366,7 +362,7 @@ public class ActivityMusic extends Activity implements OnSeekBarChangeListener {
                 sw.setOnCheckedChangeListener(new OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(final CompoundButton buttonView,
-                            final boolean isChecked) {
+                                                 final boolean isChecked) {
                         ControlPanelEffect.setParameterBoolean(mContext, mCallingPackageName,
                                 mAudioSession, ControlPanelEffect.Key.virt_enabled, isChecked);
                     }
@@ -398,7 +394,7 @@ public class ActivityMusic extends Activity implements OnSeekBarChangeListener {
 
                     @Override
                     public void onProgressChanged(final SeekBar seekBar, final int progress,
-                            final boolean fromUser) {
+                                                  final boolean fromUser) {
                         // set parameter and state
                         ControlPanelEffect.setParameterInt(mContext, mCallingPackageName,
                                 mAudioSession, ControlPanelEffect.Key.bb_strength, progress);
@@ -434,7 +430,7 @@ public class ActivityMusic extends Activity implements OnSeekBarChangeListener {
                     mEQPreset = 0;
                 }
                 mEQPresetPrevious = mEQPreset;
-                equalizerSpinnerInit((Spinner)findViewById(R.id.eqSpinner));
+                equalizerSpinnerInit((Spinner) findViewById(R.id.eqSpinner));
                 equalizerBandsInit(findViewById(R.id.eqcontainer));
             }
 
@@ -444,7 +440,7 @@ public class ActivityMusic extends Activity implements OnSeekBarChangeListener {
                 mPRPreset = ControlPanelEffect.getParameterInt(mContext, mCallingPackageName,
                         mAudioSession, ControlPanelEffect.Key.pr_current_preset);
                 mPRPresetPrevious = mPRPreset;
-                reverbSpinnerInit((Spinner)findViewById(R.id.prSpinner));
+                reverbSpinnerInit((Spinner) findViewById(R.id.prSpinner));
             }
 
         } else {
@@ -455,7 +451,7 @@ public class ActivityMusic extends Activity implements OnSeekBarChangeListener {
         ActionBar ab = getActionBar();
         final int padding = getResources().getDimensionPixelSize(
                 R.dimen.action_bar_switch_padding);
-        mToggleSwitch.setPadding(0,0, padding, 0);
+        mToggleSwitch.setPadding(0, 0, padding, 0);
         ab.setCustomView(mToggleSwitch, new ActionBar.LayoutParams(
                 ActionBar.LayoutParams.WRAP_CONTENT,
                 ActionBar.LayoutParams.WRAP_CONTENT,
@@ -548,7 +544,6 @@ public class ActivityMusic extends Activity implements OnSeekBarChangeListener {
         spinner.setSelection(mEQPreset);
     }
 
-
     /**
      * En/disables all children for a given view. For linear and relative layout children do this
      * recursively
@@ -605,9 +600,9 @@ public class ActivityMusic extends Activity implements OnSeekBarChangeListener {
         }
         if (mPresetReverbSupported) {
             int reverb = ControlPanelEffect.getParameterInt(
-                                    mContext, mCallingPackageName, mAudioSession,
-                                    ControlPanelEffect.Key.pr_current_preset);
-            ((Spinner)findViewById(R.id.prSpinner)).setSelection(reverb);
+                    mContext, mCallingPackageName, mAudioSession,
+                    ControlPanelEffect.Key.pr_current_preset);
+            ((Spinner) findViewById(R.id.prSpinner)).setSelection(reverb);
         }
     }
 
@@ -680,12 +675,6 @@ public class ActivityMusic extends Activity implements OnSeekBarChangeListener {
         equalizerUpdateDisplay();
     }
 
-    private String format(String format, Object... args) {
-        mFormatBuilder.setLength(0);
-        mFormatter.format(format, args);
-        return mFormatBuilder.toString();
-    }
-
     /*
      * For the EQ Band SeekBars
      *
@@ -693,6 +682,19 @@ public class ActivityMusic extends Activity implements OnSeekBarChangeListener {
      *
      * @see android.widget.SeekBar.OnSeekBarChangeListener#onProgressChanged(android
      * .widget.SeekBar, int, boolean)
+     */
+
+    private String format(String format, Object... args) {
+        mFormatBuilder.setLength(0);
+        mFormatter.format(format, args);
+        return mFormatBuilder.toString();
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see android.widget.SeekBar.OnSeekBarChangeListener#onStartTrackingTouch(android
+     * .widget.SeekBar)
      */
 
     @Override
@@ -711,9 +713,11 @@ public class ActivityMusic extends Activity implements OnSeekBarChangeListener {
     }
 
     /*
+     * Updates the EQ display when the user stops changing.
+     *
      * (non-Javadoc)
      *
-     * @see android.widget.SeekBar.OnSeekBarChangeListener#onStartTrackingTouch(android
+     * @see android.widget.SeekBar.OnSeekBarChangeListener#onStopTrackingTouch(android
      * .widget.SeekBar)
      */
 
@@ -727,17 +731,8 @@ public class ActivityMusic extends Activity implements OnSeekBarChangeListener {
             equalizerBandUpdate(band, bandLevels[band]);
         }
         equalizerSetPreset(mEQPresetUserPos);
-        ((Spinner)findViewById(R.id.eqSpinner)).setSelection(mEQPresetUserPos);
+        ((Spinner) findViewById(R.id.eqSpinner)).setSelection(mEQPresetUserPos);
     }
-
-    /*
-     * Updates the EQ display when the user stops changing.
-     *
-     * (non-Javadoc)
-     *
-     * @see android.widget.SeekBar.OnSeekBarChangeListener#onStopTrackingTouch(android
-     * .widget.SeekBar)
-     */
 
     @Override
     public void onStopTrackingTouch(final SeekBar seekbar) {
@@ -761,10 +756,8 @@ public class ActivityMusic extends Activity implements OnSeekBarChangeListener {
     /**
      * Updates/sets a given EQ band level.
      *
-     * @param band
-     *            Band id
-     * @param level
-     *            EQ band level
+     * @param band  Band id
+     * @param level EQ band level
      */
     private void equalizerBandUpdate(final int band, final int level) {
         ControlPanelEffect.setParameterInt(mContext, mCallingPackageName, mAudioSession,
@@ -774,8 +767,7 @@ public class ActivityMusic extends Activity implements OnSeekBarChangeListener {
     /**
      * Sets the given EQ preset.
      *
-     * @param preset
-     *            EQ preset id.
+     * @param preset EQ preset id.
      */
     private void equalizerSetPreset(final int preset) {
         ControlPanelEffect.setParameterInt(mContext, mCallingPackageName, mAudioSession,
@@ -786,8 +778,7 @@ public class ActivityMusic extends Activity implements OnSeekBarChangeListener {
     /**
      * Sets the given PR preset.
      *
-     * @param preset
-     *            PR preset id.
+     * @param preset PR preset id.
      */
     private void presetReverbSetPreset(final int preset) {
         ControlPanelEffect.setParameterInt(mContext, mCallingPackageName, mAudioSession,
@@ -804,21 +795,5 @@ public class ActivityMusic extends Activity implements OnSeekBarChangeListener {
         final Toast toast = Toast.makeText(context, getString(R.string.headset_plug), duration);
         toast.setGravity(Gravity.CENTER, toast.getXOffset() / 2, toast.getYOffset() / 2);
         toast.show();
-    }
-
-    private static boolean isVirtualizerTransauralSupported() {
-        Virtualizer virt = null;
-        boolean transauralSupported = false;
-        try {
-            virt = new Virtualizer(0, android.media.AudioSystem.newAudioSessionId());
-            transauralSupported = virt.canVirtualize(AudioFormat.CHANNEL_OUT_STEREO,
-                    Virtualizer.VIRTUALIZATION_MODE_TRANSAURAL);
-        } catch (Exception e) {
-        } finally {
-            if (virt != null) {
-                virt.release();
-            }
-        }
-        return transauralSupported;
     }
 }

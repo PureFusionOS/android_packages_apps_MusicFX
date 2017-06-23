@@ -23,8 +23,6 @@ import android.media.audiofx.AudioEffect;
 import android.os.Bundle;
 import android.util.Log;
 
-import java.util.HashMap;
-
 public class ControlPanelReceiver extends BroadcastReceiver {
 
     private final static String TAG = "MusicFXControlPanelReceiver";
