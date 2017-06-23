@@ -76,10 +76,8 @@ public class SeekBarRotator extends ViewGroup {
             // place the child below this view, so it rotates into view
             int mywidth = r - l;
             int myheight = b - t;
-            int childwidth = myheight;
-            int childheight = mywidth;
 
-            child.layout(0, myheight, childwidth, myheight + childheight);
+            child.layout(0, myheight, myheight, myheight + mywidth);
         }
     }
 

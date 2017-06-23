@@ -58,27 +58,27 @@ public class ControlPanelEffect {
     /**
      * Map containing the Virtualizer audio session, effect mappings.
      */
-    private static final ConcurrentHashMap<Integer, Virtualizer> mVirtualizerInstances = new ConcurrentHashMap<Integer, Virtualizer>(
+    private static final ConcurrentHashMap<Integer, Virtualizer> mVirtualizerInstances = new ConcurrentHashMap<>(
             HASHMAP_INITIAL_CAPACITY, HASHMAP_LOAD_FACTOR, HASHMAP_CONCURRENCY_LEVEL);
     /**
      * Map containing the BB audio session, effect mappings.
      */
-    private static final ConcurrentHashMap<Integer, BassBoost> mBassBoostInstances = new ConcurrentHashMap<Integer, BassBoost>(
+    private static final ConcurrentHashMap<Integer, BassBoost> mBassBoostInstances = new ConcurrentHashMap<>(
             HASHMAP_INITIAL_CAPACITY, HASHMAP_LOAD_FACTOR, HASHMAP_CONCURRENCY_LEVEL);
     /**
      * Map containing the EQ audio session, effect mappings.
      */
-    private static final ConcurrentHashMap<Integer, Equalizer> mEQInstances = new ConcurrentHashMap<Integer, Equalizer>(
+    private static final ConcurrentHashMap<Integer, Equalizer> mEQInstances = new ConcurrentHashMap<>(
             HASHMAP_INITIAL_CAPACITY, HASHMAP_LOAD_FACTOR, HASHMAP_CONCURRENCY_LEVEL);
     /**
      * Map containing the PR audio session, effect mappings.
      */
-    private static final ConcurrentHashMap<Integer, PresetReverb> mPresetReverbInstances = new ConcurrentHashMap<Integer, PresetReverb>(
+    private static final ConcurrentHashMap<Integer, PresetReverb> mPresetReverbInstances = new ConcurrentHashMap<>(
             HASHMAP_INITIAL_CAPACITY, HASHMAP_LOAD_FACTOR, HASHMAP_CONCURRENCY_LEVEL);
     /**
      * Map containing the package name, audio session mappings.
      */
-    private static final ConcurrentHashMap<String, Integer> mPackageSessions = new ConcurrentHashMap<String, Integer>(
+    private static final ConcurrentHashMap<String, Integer> mPackageSessions = new ConcurrentHashMap<>(
             HASHMAP_INITIAL_CAPACITY, HASHMAP_LOAD_FACTOR, HASHMAP_CONCURRENCY_LEVEL);
     private final static boolean VIRTUALIZER_ENABLED_DEFAULT = true;
     private final static int VIRTUALIZER_STRENGTH_DEFAULT = 0;
@@ -301,7 +301,7 @@ public class ControlPanelEffect {
      * @param audioSession System wide unique audio session identifier.
      * @return effect control mode
      */
-    public static ControlMode getControlMode(final int audioSession) {
+    private static ControlMode getControlMode(final int audioSession) {
         if (audioSession == AudioEffect.ERROR_BAD_VALUE) {
             return ControlMode.CONTROL_PREFERENCES;
         }
@@ -328,7 +328,7 @@ public class ControlPanelEffect {
             // Global on/off
             if (key == Key.global_enabled) {
                 boolean processingEnabled = false;
-                if (value == true) {
+                if (value) {
                     // enable all with respect to preferences
                     if (controlMode == ControlMode.CONTROL_EFFECTS) {
                         final Virtualizer virtualizerEffect = getVirtualizerEffect(audioSession);
@@ -413,7 +413,7 @@ public class ControlPanelEffect {
             } else if (controlMode == ControlMode.CONTROL_EFFECTS) {
                 final boolean isGlobalEnabled = prefs.getBoolean(Key.global_enabled.toString(),
                         GLOBAL_ENABLED_DEFAULT);
-                if (isGlobalEnabled == true) {
+                if (isGlobalEnabled) {
                     // Set effect parameters
                     switch (key) {
 
@@ -747,8 +747,8 @@ public class ControlPanelEffect {
      * @param key
      * @return parameter value
      */
-    public static int getParameterInt(final Context context, final String packageName,
-                                      final int audioSession, final String key) {
+    private static int getParameterInt(final Context context, final String packageName,
+                                       final int audioSession, final String key) {
         int value = 0;
 
         try {
@@ -870,8 +870,8 @@ public class ControlPanelEffect {
      * @param key
      * @return parameter value
      */
-    public static String getParameterString(final Context context, final String packageName,
-                                            final int audioSession, final String key) {
+    private static String getParameterString(final Context context, final String packageName,
+                                             final int audioSession, final String key) {
         String value = "";
         try {
             final SharedPreferences prefs = context.getSharedPreferences(packageName,
@@ -904,15 +904,15 @@ public class ControlPanelEffect {
     /**
      * Gets string parameter given key and arg.
      *
+     * @param args
      * @param context
      * @param packageName
      * @param audioSession System wide unique audio session identifier.
-     * @param args
      * @return parameter value
      */
     public static String getParameterString(final Context context, final String packageName,
-                                            final int audioSession, final Key key, final int arg) {
-        return getParameterString(context, packageName, audioSession, key.toString() + arg);
+                                            final int audioSession, final int arg) {
+        return getParameterString(context, packageName, audioSession, Key.eq_preset_name.toString() + arg);
     }
 
     /**
@@ -990,7 +990,7 @@ public class ControlPanelEffect {
                 virtualizerEffect.setProperties(settings);
 
                 // set parameters
-                if (isGlobalEnabled == true) {
+                if (isGlobalEnabled) {
                     virtualizerEffect.setEnabled(isEnabled);
                 } else {
                     virtualizerEffect.setEnabled(false);
@@ -1036,7 +1036,7 @@ public class ControlPanelEffect {
                 bassBoostEffect.setProperties(settings);
 
                 // set parameters
-                if (isGlobalEnabled == true) {
+                if (isGlobalEnabled) {
                     bassBoostEffect.setEnabled(isEnabled);
                 } else {
                     bassBoostEffect.setEnabled(false);
@@ -1137,7 +1137,7 @@ public class ControlPanelEffect {
                 final boolean isEnabled = prefs.getBoolean(Key.eq_enabled.toString(),
                         EQUALIZER_ENABLED_DEFAULT);
                 editor.putBoolean(Key.eq_enabled.toString(), isEnabled);
-                if (isGlobalEnabled == true) {
+                if (isGlobalEnabled) {
                     equalizerEffect.setEnabled(isEnabled);
                 } else {
                     equalizerEffect.setEnabled(false);
@@ -1146,21 +1146,21 @@ public class ControlPanelEffect {
                 // dump
                 Log.v(TAG, "Parameters: Equalizer");
                 Log.v(TAG, "bands=" + eQNumBands);
-                String str = "levels=";
+                StringBuilder str = new StringBuilder("levels=");
                 for (short band = 0; band < eQNumBands; band++) {
-                    str = str + bandLevel[band] + "; ";
+                    str.append(bandLevel[band]).append("; ");
                 }
-                Log.v(TAG, str);
-                str = "center=";
+                Log.v(TAG, str.toString());
+                str = new StringBuilder("center=");
                 for (short band = 0; band < eQNumBands; band++) {
-                    str = str + eQCenterFreq[band] + "; ";
+                    str.append(eQCenterFreq[band]).append("; ");
                 }
-                Log.v(TAG, str);
-                str = "presets=";
+                Log.v(TAG, str.toString());
+                str = new StringBuilder("presets=");
                 for (short preset = 0; preset < eQNumPresets; preset++) {
-                    str = str + eQPresetNames[preset] + "; ";
+                    str.append(eQPresetNames[preset]).append("; ");
                 }
-                Log.v(TAG, str);
+                Log.v(TAG, str.toString());
                 Log.v(TAG, "current=" + eQPreset);
             } catch (final RuntimeException e) {
                 Log.e(TAG, errorTag + e);
@@ -1363,7 +1363,7 @@ public class ControlPanelEffect {
      * The control mode specifies if control panel updates effects and preferences or only
      * preferences.
      */
-    static enum ControlMode {
+    enum ControlMode {
         /**
          * Control panel updates effects and preferences. Applicable when audio session is delivered
          * by user.
@@ -1376,7 +1376,7 @@ public class ControlPanelEffect {
         CONTROL_PREFERENCES
     }
 
-    static enum Key {
+    enum Key {
         global_enabled, virt_enabled, virt_strength_supported, virt_strength, virt_type, bb_enabled,
         bb_strength, te_enabled, te_strength, avl_enabled, lm_enabled, lm_strength, eq_enabled,
         eq_num_bands, eq_level_range, eq_center_freq, eq_band_level, eq_num_presets, eq_preset_name,

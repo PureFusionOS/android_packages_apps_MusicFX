@@ -21,7 +21,7 @@
     <TextView
         android:id="@+id/noEffectsTextView"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_gravity="center"
         android:layout_weight="1"
         android:ellipsize="marquee"
@@ -68,7 +68,7 @@
 
                 <TextView
                     android:id="@+id/bBStrengthText"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:ellipsize="marquee"
@@ -101,7 +101,7 @@
 
                 <TextView
                     android:id="@+id/vIStrengthText"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:ellipsize="marquee"

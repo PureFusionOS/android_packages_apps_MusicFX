@@ -41,14 +41,10 @@ import java.util.List;
 public class ControlPanelPicker extends AlertActivity implements OnClickListener, OnPrepareListViewListener {
 
 
-    private DialogInterface.OnClickListener mItemClickListener =
-            new DialogInterface.OnClickListener() {
-
-                public void onClick(DialogInterface dialog, int which) {
-                    // Save the position of most recently clicked item
-                    mAlertParams.mCheckedItem = which;
-                }
-
+    private final DialogInterface.OnClickListener mItemClickListener =
+            (dialog, which) -> {
+                // Save the position of most recently clicked item
+                mAlertParams.mCheckedItem = which;
             };
 
     @Override
@@ -109,8 +105,4 @@ public class ControlPanelPicker extends AlertActivity implements OnClickListener
         }
     }
 
-    @Override
-    public void onPrepareListView(ListView listView) {
-        //mAlertParams.mCheckedItem = mDefPanelPos;
-    }
 }

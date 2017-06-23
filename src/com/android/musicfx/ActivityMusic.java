@@ -34,13 +34,11 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Spinner;
@@ -180,8 +178,8 @@ public class ActivityMusic extends Activity implements OnSeekBarChangeListener {
     };
 
     // Preset Reverb fields
-    private StringBuilder mFormatBuilder = new StringBuilder();
-    private Formatter mFormatter = new Formatter(mFormatBuilder, Locale.getDefault());
+    private final StringBuilder mFormatBuilder = new StringBuilder();
+    private final Formatter mFormatter = new Formatter(mFormatBuilder, Locale.getDefault());
     /**
      * Context field
      */
@@ -202,7 +200,7 @@ public class ActivityMusic extends Activity implements OnSeekBarChangeListener {
             virt = new Virtualizer(0, android.media.AudioSystem.newAudioSessionId());
             transauralSupported = virt.canVirtualize(AudioFormat.CHANNEL_OUT_STEREO,
                     Virtualizer.VIRTUALIZATION_MODE_TRANSAURAL);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         } finally {
             if (virt != null) {
                 virt.release();
@@ -254,7 +252,7 @@ public class ActivityMusic extends Activity implements OnSeekBarChangeListener {
         // Determine available/supported effects
         Log.v(TAG, "Available effects:");
         for (final Descriptor effect : effects) {
-            Log.v(TAG, effect.name.toString() + ", type: " + effect.type.toString());
+            Log.v(TAG, effect.name + ", type: " + effect.type.toString());
 
             if (effect.type.equals(AudioEffect.EFFECT_TYPE_VIRTUALIZER)) {
                 mVirtualizerSupported = true;
@@ -278,7 +276,7 @@ public class ActivityMusic extends Activity implements OnSeekBarChangeListener {
         mEQPresetNames = new String[numPresets + 2];
         for (short i = 0; i < numPresets; i++) {
             mEQPresetNames[i] = ControlPanelEffect.getParameterString(mContext,
-                    mCallingPackageName, mAudioSession, ControlPanelEffect.Key.eq_preset_name, i);
+                    mCallingPackageName, mAudioSession, i);
         }
         mEQPresetNames[numPresets] = getString(R.string.ci_extreme);
         mEQPresetNames[numPresets + 1] = getString(R.string.user);
@@ -291,35 +289,27 @@ public class ActivityMusic extends Activity implements OnSeekBarChangeListener {
             // Depending on the state enable the supported effects if they were
             // checked in the setup tab.
             mToggleSwitch = new Switch(this);
-            mToggleSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(final CompoundButton buttonView,
-                                             final boolean isChecked) {
+            mToggleSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
 
-                    // set parameter and state
-                    ControlPanelEffect.setParameterBoolean(mContext, mCallingPackageName,
-                            mAudioSession, ControlPanelEffect.Key.global_enabled, isChecked);
-                    // Enable Linear layout (in scroll layout) view with all
-                    // effect contents depending on checked state
-                    setEnabledAllChildren(viewGroup, isChecked);
-                    // update UI according to headset state
-                    updateUIHeadset();
-                }
+                // set parameter and state
+                ControlPanelEffect.setParameterBoolean(mContext, mCallingPackageName,
+                        mAudioSession, ControlPanelEffect.Key.global_enabled, isChecked);
+                // Enable Linear layout (in scroll layout) view with all
+                // effect contents depending on checked state
+                setEnabledAllChildren(viewGroup, isChecked);
+                // update UI according to headset state
+                updateUIHeadset();
             });
 
             // Initialize the Virtualizer elements.
             // Set the SeekBar listener.
             if (mVirtualizerSupported) {
                 // Show msg when disabled slider (layout) is touched
-                findViewById(R.id.vILayout).setOnTouchListener(new OnTouchListener() {
-
-                    @Override
-                    public boolean onTouch(final View v, final MotionEvent event) {
-                        if (event.getAction() == MotionEvent.ACTION_UP) {
-                            showHeadsetMsg();
-                        }
-                        return false;
+                findViewById(R.id.vILayout).setOnTouchListener((v, event) -> {
+                    if (event.getAction() == MotionEvent.ACTION_UP) {
+                        showHeadsetMsg();
                     }
+                    return false;
                 });
 
                 final SeekBar seekbar = (SeekBar) findViewById(R.id.vIStrengthSeekBar);
@@ -359,29 +349,19 @@ public class ActivityMusic extends Activity implements OnSeekBarChangeListener {
                 });
 
                 final Switch sw = (Switch) findViewById(R.id.vIStrengthToggle);
-                sw.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(final CompoundButton buttonView,
-                                                 final boolean isChecked) {
-                        ControlPanelEffect.setParameterBoolean(mContext, mCallingPackageName,
-                                mAudioSession, ControlPanelEffect.Key.virt_enabled, isChecked);
-                    }
-                });
+                sw.setOnCheckedChangeListener((buttonView, isChecked) -> ControlPanelEffect.setParameterBoolean(mContext, mCallingPackageName,
+                        mAudioSession, ControlPanelEffect.Key.virt_enabled, isChecked));
             }
 
             // Initialize the Bass Boost elements.
             // Set the SeekBar listener.
             if (mBassBoostSupported) {
                 // Show msg when disabled slider (layout) is touched
-                findViewById(R.id.bBLayout).setOnTouchListener(new OnTouchListener() {
-
-                    @Override
-                    public boolean onTouch(final View v, final MotionEvent event) {
-                        if (event.getAction() == MotionEvent.ACTION_UP) {
-                            showHeadsetMsg();
-                        }
-                        return false;
+                findViewById(R.id.bBLayout).setOnTouchListener((v, event) -> {
+                    if (event.getAction() == MotionEvent.ACTION_UP) {
+                        showHeadsetMsg();
                     }
+                    return false;
                 });
 
                 final SeekBar seekbar = (SeekBar) findViewById(R.id.bBStrengthSeekBar);
@@ -501,7 +481,7 @@ public class ActivityMusic extends Activity implements OnSeekBarChangeListener {
     }
 
     private void reverbSpinnerInit(Spinner spinner) {
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, PRESETREVERBPRESETSTRINGS);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
@@ -523,7 +503,7 @@ public class ActivityMusic extends Activity implements OnSeekBarChangeListener {
     }
 
     private void equalizerSpinnerInit(Spinner spinner) {
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, mEQPresetNames);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
@@ -643,15 +623,14 @@ public class ActivityMusic extends Activity implements OnSeekBarChangeListener {
 
         for (int band = 0; band < mNumberEqualizerBands; band++) {
             // Unit conversion from mHz to Hz and use k prefix if necessary to display
-            final int centerFreq = centerFreqs[band] / 1000;
-            float centerFreqHz = centerFreq;
+            float centerFreqHz = centerFreqs[band] / 1000;
             String unitPrefix = "";
             if (centerFreqHz >= 1000) {
                 centerFreqHz = centerFreqHz / 1000;
                 unitPrefix = "k";
             }
             ((TextView) eqcontainer.findViewById(EQViewElementIds[band][0])).setText(
-                    format("%.0f ", centerFreqHz) + unitPrefix + "Hz");
+                    format(centerFreqHz) + unitPrefix + "Hz");
             mEqualizerSeekBar[band] = (SeekBar) eqcontainer
                     .findViewById(EQViewElementIds[band][1]);
             mEqualizerSeekBar[band].setMax(mEqualizerMaxBandLevel - mEqualizerMinBandLevel);
@@ -684,9 +663,9 @@ public class ActivityMusic extends Activity implements OnSeekBarChangeListener {
      * .widget.SeekBar, int, boolean)
      */
 
-    private String format(String format, Object... args) {
+    private String format(Object... args) {
         mFormatBuilder.setLength(0);
-        mFormatter.format(format, args);
+        mFormatter.format("%.0f ", args);
         return mFormatBuilder.toString();
     }
 

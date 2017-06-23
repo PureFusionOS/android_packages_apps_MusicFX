@@ -23,7 +23,7 @@ public final class OpenSLESConstants {
     /**
      * Minimum volume level in millibel (mb).
      */
-    public static final short SL_MILLIBEL_MIN = -9600;
+    private static final short SL_MILLIBEL_MIN = -9600;
     /**
      * This value is used when equalizer setting is not defined.
      */

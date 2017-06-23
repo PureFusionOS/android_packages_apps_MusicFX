@@ -23,8 +23,7 @@
         android:name="android.permission.CHANGE_COMPONENT_ENABLED_STATE" />
     <uses-permission
         android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
-    <uses-permission
-        android:name="android.permission.BLUETOOTH"></uses-permission>
+    <uses-permission android:name="android.permission.BLUETOOTH" />
     <application
         android:icon="@drawable/icon"
         android:label="@string/app_name"
