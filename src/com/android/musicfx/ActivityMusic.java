@@ -64,6 +64,7 @@ import com.android.musicfx.widget.Visualizer.OnSeekBarChangeListener;
 
 import java.util.Formatter;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -192,7 +193,7 @@ public class ActivityMusic extends AppCompatActivity {
         // Determine available/supported effects
         Log.d(TAG, "Available effects:");
         for (final Descriptor effect : effects) {
-            Log.d(TAG, effect.name.toString() + ", type: " + effect.type.toString());
+            Log.d(TAG, effect.name + ", type: " + effect.type.toString());
 
             if (effect.type.equals(AudioEffect.EFFECT_TYPE_VIRTUALIZER)) {
                 mVirtualizerSupported = true;
@@ -200,7 +201,7 @@ public class ActivityMusic extends AppCompatActivity {
                         || effect.uuid.equals(UUID.fromString("e6c98a16-22a3-11e2-b87b-f23c91aec05e"))
                         || effect.uuid.equals(UUID.fromString("d3467faa-acc7-4d34-acaf-0002a5d5c51b"))) {
                     mVirtualizerIsHeadphoneOnly = true;
-                    Log.d(TAG, effect.name.toString() + ", mVirtualizerIsHeadphoneOnly = " + mVirtualizerIsHeadphoneOnly);
+                    Log.d(TAG, effect.name + ", mVirtualizerIsHeadphoneOnly = " + mVirtualizerIsHeadphoneOnly);
                 }
             } else if (effect.type.equals(AudioEffect.EFFECT_TYPE_BASS_BOOST)) {
                 mBassBoostSupported = true;
@@ -401,13 +402,13 @@ public class ActivityMusic extends AppCompatActivity {
     }
 
     private void updateTitle() {
-        if (mCurrentLevel == ControlPanelEffect.SPEAKER_PREF_SCOPE) {
+        if (Objects.equals(mCurrentLevel, ControlPanelEffect.SPEAKER_PREF_SCOPE)) {
             setTitle(getResources().getString(R.string.drawer_item_speaker));
             mDrawerList.getMenu().findItem(R.id.menu_speaker).setChecked(true);
-        } else if (mCurrentLevel == ControlPanelEffect.HEADSET_PREF_SCOPE) {
+        } else if (Objects.equals(mCurrentLevel, ControlPanelEffect.HEADSET_PREF_SCOPE)) {
             setTitle(getResources().getString(R.string.drawer_item_headset));
             mDrawerList.getMenu().findItem(R.id.menu_headset).setChecked(true);
-        } else if (mCurrentLevel == ControlPanelEffect.BLUETOOTH_PREF_SCOPE) {
+        } else if (Objects.equals(mCurrentLevel, ControlPanelEffect.BLUETOOTH_PREF_SCOPE)) {
             setTitle(getResources().getString(R.string.drawer_item_bluetooth));
             mDrawerList.getMenu().findItem(R.id.menu_bluetooth).setChecked(true);
         }
@@ -415,11 +416,11 @@ public class ActivityMusic extends AppCompatActivity {
 
     private void updateCurrentLevelInfo(String level) {
         String current = getResources().getString(R.string.current_output);
-        if (level == ControlPanelEffect.SPEAKER_PREF_SCOPE) {
+        if (Objects.equals(level, ControlPanelEffect.SPEAKER_PREF_SCOPE)) {
             mCurrentLevelText.setText(current + " " + getResources().getString(R.string.drawer_item_speaker));
-        } else if (level == ControlPanelEffect.HEADSET_PREF_SCOPE) {
+        } else if (Objects.equals(level, ControlPanelEffect.HEADSET_PREF_SCOPE)) {
             mCurrentLevelText.setText(current + " " + getResources().getString(R.string.drawer_item_headset));
-        } else if (level == ControlPanelEffect.BLUETOOTH_PREF_SCOPE) {
+        } else if (Objects.equals(level, ControlPanelEffect.BLUETOOTH_PREF_SCOPE)) {
             mCurrentLevelText.setText(current + " " + getResources().getString(R.string.drawer_item_bluetooth));
         }
     }
@@ -446,18 +447,15 @@ public class ActivityMusic extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.toolbar_menu, menu);
         mToolbarSwitch = (Switch) menu.findItem(R.id.toolbar_switch).getActionView().findViewById(R.id.toolbar_switch_button);
-        mToolbarSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                // set parameter and state
-                ControlPanelEffect.setEnabled(mContext, mCurrentLevel, isChecked);
-                // Enable Linear layout (in scroll layout) view with all
-                // effect contents depending on checked state
-                setEnabledAllChildren(mViewGroup, isChecked);
-                // update UI according to headset state
-                updateUIHeadset(false);
-                setInterception(isChecked);
-            }
+        mToolbarSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            // set parameter and state
+            ControlPanelEffect.setEnabled(mContext, mCurrentLevel, isChecked);
+            // Enable Linear layout (in scroll layout) view with all
+            // effect contents depending on checked state
+            setEnabledAllChildren(mViewGroup, isChecked);
+            // update UI according to headset state
+            updateUIHeadset(false);
+            setInterception(isChecked);
         });
         updateUI();
         return true;
@@ -518,7 +516,7 @@ public class ActivityMusic extends AppCompatActivity {
         super.onPause();
         try {
             unregisterReceiver(mPrefLevelChanged);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 
@@ -617,17 +615,14 @@ public class ActivityMusic extends AppCompatActivity {
                 mEQPresetNames);
 
         mGallery.setAdapter(adapter);
-        mGallery.setOnItemSelectedListener(new Gallery.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(int position) {
-                if (position != mEQPresetPrevious) {
-                    mEQPreset = position;
-                    showSeekBar(position == mEQPresetUserPos);
-                    equalizerSetPreset(position);
-                    equalizerUpdateDisplay();
-                }
-                mEQPresetPrevious = position;
+        mGallery.setOnItemSelectedListener(position -> {
+            if (position != mEQPresetPrevious) {
+                mEQPreset = position;
+                showSeekBar(position == mEQPresetUserPos);
+                equalizerSetPreset(position);
+                equalizerUpdateDisplay();
             }
+            mEQPresetPrevious = position;
         });
         mGallery.setSelection(mEQPreset);
         showSeekBar(mEQPreset == mEQPresetUserPos);
@@ -736,14 +731,11 @@ public class ActivityMusic extends AppCompatActivity {
         if (isEnabled) {
             ill.setOnClickListener(null);
         } else {
-            ill.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    final Toast toast = Toast.makeText(mContext,
-                            getString(R.string.power_on_prompt), Toast.LENGTH_SHORT);
-                    toast.setGravity(Gravity.CENTER, 0, 0);
-                    toast.show();
-                }
+            ill.setOnClickListener(v -> {
+                final Toast toast = Toast.makeText(mContext,
+                        getString(R.string.power_on_prompt), Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                toast.show();
             });
         }
     }
@@ -783,6 +775,7 @@ public class ActivityMusic extends AppCompatActivity {
                 ControlPanelEffect.Key.eq_center_freq);
         final int[] bandLevelRange = ControlPanelEffect.getParameterIntArray(mContext, mCurrentLevel,
                 ControlPanelEffect.Key.eq_level_range);
+        assert bandLevelRange != null;
         mEqualizerMinBandLevel = Math.min(EQUALIZER_MIN_LEVEL, bandLevelRange[0]);
         final int mEqualizerMaxBandLevel = Math.max(EQUALIZER_MAX_LEVEL, bandLevelRange[1]);
         final OnSeekBarChangeListener listener = new OnSeekBarChangeListener() {
@@ -809,23 +802,20 @@ public class ActivityMusic extends AppCompatActivity {
             }
         };
 
-        final OnTouchListener tl = new OnTouchListener() {
-            @Override
-            public boolean onTouch(final View v, final MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        if (mEQPreset != mEQPresetUserPos) {
-                            final Toast toast = Toast.makeText(mContext,
-                                    getString(R.string.eq_custom), Toast.LENGTH_SHORT);
-                            toast.setGravity(Gravity.TOP | Gravity.CENTER, 0,
-                                    toast.getYOffset() * 2);
-                            toast.show();
-                            return true;
-                        }
-                        return false;
-                    default:
-                        return false;
-                }
+        final OnTouchListener tl = (v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    if (mEQPreset != mEQPresetUserPos) {
+                        final Toast toast = Toast.makeText(mContext,
+                                getString(R.string.eq_custom), Toast.LENGTH_SHORT);
+                        toast.setGravity(Gravity.TOP | Gravity.CENTER, 0,
+                                toast.getYOffset() * 2);
+                        toast.show();
+                        return true;
+                    }
+                    return false;
+                default:
+                    return false;
             }
         };
 
@@ -836,8 +826,8 @@ public class ActivityMusic extends AppCompatActivity {
                 pixels, ViewGroup.LayoutParams.MATCH_PARENT);
         for (int band = 0; band < mNumberEqualizerBands; band++) {
             // Unit conversion from mHz to Hz and use k prefix if necessary to display
-            final int centerFreq = centerFreqs[band] / 1000;
-            float centerFreqHz = centerFreq;
+            assert centerFreqs != null;
+            float centerFreqHz = centerFreqs[band] / 1000;
             String unitPrefix = "";
             if (centerFreqHz >= 1000) {
                 centerFreqHz = centerFreqHz / 1000;
@@ -881,6 +871,7 @@ public class ActivityMusic extends AppCompatActivity {
         final int[] bandLevels = ControlPanelEffect.getParameterIntArray(mContext,
                 mCurrentLevel, ControlPanelEffect.Key.eq_band_level);
         for (short band = 0; band < mNumberEqualizerBands; band++) {
+            assert bandLevels != null;
             final int level = bandLevels[band];
             final int progress = level - mEqualizerMinBandLevel;
             mEqualizerVisualizer[band].setProgress(progress);

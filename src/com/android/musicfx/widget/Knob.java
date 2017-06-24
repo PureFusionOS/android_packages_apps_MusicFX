@@ -231,8 +231,7 @@ public class Knob extends FrameLayout {
 
     @Override
     protected void onSizeChanged(int w, int h, int oldW, int oldH) {
-        int size = w > h ? h : w;
-        mWidth = size;
+        mWidth = w > h ? h : w;
         mIndicatorWidth = mKnobOn.getWidth();
 
         int diff;

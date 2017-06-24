@@ -124,6 +124,7 @@ public abstract class AbsSeekBar extends ProgressBar {
         invalidate();
         if (needUpdate) {
             updateThumbPos(getWidth(), getHeight());
+            assert thumb != null;
             if (thumb.isStateful()) {
                 // Note that if the states are different this won't work.
                 // For now, let's consider that an app bug.

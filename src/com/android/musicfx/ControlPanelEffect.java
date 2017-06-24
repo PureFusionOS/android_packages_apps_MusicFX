@@ -181,9 +181,9 @@ public class ControlPanelEffect {
         boolean value = false;
 
         try {
-            value = prefs.getBoolean(key.toString(), value);
+            value = prefs.getBoolean(key.toString(), false);
         } catch (final RuntimeException e) {
-            Log.e(TAG, "getParameterBoolean: " + key + "; " + value + "; " + e);
+            Log.e(TAG, "getParameterBoolean: " + key + "; " + false + "; " + e);
         }
 
         return value;
@@ -201,7 +201,6 @@ public class ControlPanelEffect {
     public static void setParameterInt(final Context context, final String prefLevel, final Key key, final int arg0,
                                        final int arg1) {
         String strKey = key.toString();
-        int value = arg0;
 
         try {
             final SharedPreferences prefs = context.getSharedPreferences(prefLevel,
@@ -217,12 +216,12 @@ public class ControlPanelEffect {
                     }
                     final short band = (short) arg1;
                     strKey = strKey + band;
-                    editor.putInt(Key.eq_preset_user_band_level.toString() + band, value);
+                    editor.putInt(Key.eq_preset_user_band_level.toString() + band, arg0);
                     break;
                 }
 
                 case eq_current_preset: {
-                    final short preset = (short) value;
+                    final short preset = (short) arg0;
                     final int numBands = prefs.getInt(Key.eq_num_bands.toString(),
                             EQUALIZER_NUMBER_BANDS_DEFAULT);
                     final int numPresets = prefs.getInt(Key.eq_num_presets.toString(),
@@ -256,7 +255,7 @@ public class ControlPanelEffect {
             }
 
             // Set preferences
-            editor.putInt(strKey, value);
+            editor.putInt(strKey, arg0);
             editor.apply();
 
             if (controlMode == ControlMode.CONTROL_EFFECTS) {
@@ -615,11 +614,7 @@ public class ControlPanelEffect {
                 }
 
                 mIsInitialized = true;
-            } catch (final IllegalStateException e) {
-                Log.e(TAG, "Equalizer: " + e);
-            } catch (final IllegalArgumentException e) {
-                Log.e(TAG, "Equalizer: " + e);
-            } catch (final UnsupportedOperationException e) {
+            } catch (final IllegalStateException | IllegalArgumentException e) {
                 Log.e(TAG, "Equalizer: " + e);
             } catch (final RuntimeException e) {
                 Log.e(TAG, "Equalizer: " + e);
