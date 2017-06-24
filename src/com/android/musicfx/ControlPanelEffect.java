@@ -55,7 +55,7 @@ public class ControlPanelEffect {
      * The control mode specifies if control panel updates effects and preferences or only
      * preferences.
      */
-    static enum ControlMode {
+    enum ControlMode {
         /**
          * Control panel updates effects and preferences. Applicable when audio session is delivered
          * by user.
@@ -68,7 +68,7 @@ public class ControlPanelEffect {
         CONTROL_PREFERENCES
     }
 
-    static enum Key {
+    enum Key {
         global_enabled, virt_enabled, virt_strength_supported, virt_strength, virt_type, bb_enabled,
         bb_strength, te_enabled, te_strength, avl_enabled, lm_enabled, lm_strength, eq_enabled,
         eq_num_bands, eq_level_range, eq_center_freq, eq_band_level,

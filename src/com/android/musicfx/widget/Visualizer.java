@@ -49,9 +49,9 @@ import com.android.musicfx.seekbar.SeekBar;
 
 public class Visualizer extends LinearLayout {
     public interface OnSeekBarChangeListener {
-        public void onProgressChanged(Visualizer visualizer, int progress, boolean fromUser);
-        public void onStartTrackingTouch(Visualizer visualizer);
-        public void onStopTrackingTouch(Visualizer visualizer);
+        void onProgressChanged(Visualizer visualizer, int progress, boolean fromUser);
+        void onStartTrackingTouch(Visualizer visualizer);
+        void onStopTrackingTouch(Visualizer visualizer);
     }
 
     private final int MAX_TILES = 17;

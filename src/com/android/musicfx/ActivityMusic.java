@@ -809,8 +809,8 @@ public class ActivityMusic extends AppCompatActivity {
                 ControlPanelEffect.Key.eq_center_freq);
         final int[] bandLevelRange = ControlPanelEffect.getParameterIntArray(mContext, mCurrentLevel,
                 ControlPanelEffect.Key.eq_level_range);
-        mEqualizerMinBandLevel = (int) Math.min(EQUALIZER_MIN_LEVEL, bandLevelRange[0]);
-        final int mEqualizerMaxBandLevel = (int) Math.max(EQUALIZER_MAX_LEVEL, bandLevelRange[1]);
+        mEqualizerMinBandLevel = Math.min(EQUALIZER_MIN_LEVEL, bandLevelRange[0]);
+        final int mEqualizerMaxBandLevel = Math.max(EQUALIZER_MAX_LEVEL, bandLevelRange[1]);
         final OnSeekBarChangeListener listener = new OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(final Visualizer v, final int progress,

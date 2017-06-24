@@ -41,7 +41,7 @@ import com.android.musicfx.R;
 
 public class Gallery extends android.widget.Gallery {
     public interface OnItemSelectedListener {
-        public void onItemSelected(int position);
+        void onItemSelected(int position);
     }
 
     private boolean mEnabled = false;
@@ -122,6 +122,6 @@ public class Gallery extends android.widget.Gallery {
 
     @Override
     public boolean onDown(MotionEvent e) {
-        return mEnabled ? super.onDown(e) : false;
+        return mEnabled && super.onDown(e);
     }
 }
