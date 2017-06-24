@@ -16,46 +16,26 @@
 
 package com.android.musicfx;
 
-import com.android.audiofx.OpenSLESConstants;
-import com.android.musicfx.widget.Gallery;
-import com.android.musicfx.widget.InterceptableLinearLayout;
-import com.android.musicfx.widget.Knob;
-import com.android.musicfx.widget.Knob.OnKnobChangeListener;
-import com.android.musicfx.widget.Visualizer;
-import com.android.musicfx.widget.Visualizer.OnSeekBarChangeListener;
-
-import android.app.ActionBar;
-import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.bluetooth.BluetoothClass;
-import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.media.AudioManager;
 import android.media.audiofx.AudioEffect;
 import android.media.audiofx.AudioEffect.Descriptor;
 import android.os.Bundle;
 import android.os.SystemProperties;
+import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.support.design.widget.NavigationView;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -63,20 +43,24 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.Switch;
-import android.util.DisplayMetrics;
+
+import com.android.audiofx.OpenSLESConstants;
+import com.android.musicfx.widget.Gallery;
+import com.android.musicfx.widget.InterceptableLinearLayout;
+import com.android.musicfx.widget.Knob;
+import com.android.musicfx.widget.Knob.OnKnobChangeListener;
+import com.android.musicfx.widget.Visualizer;
+import com.android.musicfx.widget.Visualizer.OnSeekBarChangeListener;
 
 import java.util.Formatter;
 import java.util.Locale;
@@ -102,7 +86,15 @@ public class ActivityMusic extends AppCompatActivity {
      * Min levels per EQ band in millibels (1 dB = 100 mB)
      */
     private final static int EQUALIZER_MIN_LEVEL = -1000;
-
+    /**
+     * Array containing RSid of preset reverb names.
+     */
+    private static final int[] mReverbPresetRSids = {
+            R.string.none, R.string.smallroom, R.string.mediumroom, R.string.largeroom,
+            R.string.mediumhall, R.string.largehall, R.string.plate
+    };
+    // Equalizer fields
+    private final Visualizer[] mEqualizerVisualizer = new Visualizer[EQUALIZER_MAX_BANDS];
     /**
      * Indicates if Virtualizer effect is supported.
      */
@@ -121,9 +113,6 @@ public class ActivityMusic extends AppCompatActivity {
      */
     private boolean mPresetReverbSupported;
     private boolean mStereoWideSupported;
-
-    // Equalizer fields
-    private final Visualizer[] mEqualizerVisualizer = new Visualizer[EQUALIZER_MAX_BANDS];
     private int mNumberEqualizerBands;
     private int mEqualizerMinBandLevel;
     private int mEQPresetUserPos = 1;
@@ -133,51 +122,20 @@ public class ActivityMusic extends AppCompatActivity {
     private String[] mEQPresetNames;
     private String[] mReverbPresetNames;
     private String[] mSWStrengthNames;
-
     private int mPRPreset;
     private int mPRPresetPrevious;
     private Spinner mPRPresetSpinner;
     private int mSWStrength;
     private int mSWStrengthPrevious;
     private Spinner mSWStrengthSpinner;
-
     private boolean mPRPresetSpinnerInit;
     private boolean mSWStrengthSpinnerInit;
     private ArrayAdapter<String> mSWStrengthAdapter;
     private ArrayAdapter<String> mPRPresetAdapter;
-
     private boolean mIsHeadsetOn = false;
     private boolean mIsSpeakerOn = false;
     private boolean mIsBluetoothOn = false;
-
     private TextView mCurrentLevelText;
-    private StringBuilder mFormatBuilder = new StringBuilder();
-    private Formatter mFormatter = new Formatter(mFormatBuilder, Locale.getDefault());
-
-    private String mCurrentLevel = ControlPanelEffect.SPEAKER_PREF_SCOPE;
-    private NavigationView mDrawerList;
-    private DrawerLayout mDrawerLayout;
-    private ActionBarDrawerToggle mDrawerToggle;
-    private Switch mToolbarSwitch;
-    private ViewGroup mViewGroup;
-    private Gallery mGallery;
-    private int mHighlightColor;
-    private int mTextColor;
-    private int mSpinoffColor;
-
-    /**
-     * Array containing RSid of preset reverb names.
-     */
-    private static final int[] mReverbPresetRSids = {
-        R.string.none, R.string.smallroom, R.string.mediumroom, R.string.largeroom,
-        R.string.mediumhall, R.string.largehall, R.string.plate
-    };
-
-    /**
-     * Context field
-     */
-    private Context mContext;
-
     private final BroadcastReceiver mPrefLevelChanged = new BroadcastReceiver() {
         @Override
         public void onReceive(final Context context, final Intent intent) {
@@ -192,6 +150,22 @@ public class ActivityMusic extends AppCompatActivity {
             }
         }
     };
+    private StringBuilder mFormatBuilder = new StringBuilder();
+    private Formatter mFormatter = new Formatter(mFormatBuilder, Locale.getDefault());
+    private String mCurrentLevel = ControlPanelEffect.SPEAKER_PREF_SCOPE;
+    private NavigationView mDrawerList;
+    private DrawerLayout mDrawerLayout;
+    private ActionBarDrawerToggle mDrawerToggle;
+    private Switch mToolbarSwitch;
+    private ViewGroup mViewGroup;
+    private Gallery mGallery;
+    private int mHighlightColor;
+    private int mTextColor;
+    private int mSpinoffColor;
+    /**
+     * Context field
+     */
+    private Context mContext;
 
     /*
      * Declares and initializes all objects and widgets in the layouts and the CheckBox and SeekBar
@@ -223,8 +197,8 @@ public class ActivityMusic extends AppCompatActivity {
             if (effect.type.equals(AudioEffect.EFFECT_TYPE_VIRTUALIZER)) {
                 mVirtualizerSupported = true;
                 if (effect.uuid.equals(UUID.fromString("1d4033c0-8557-11df-9f2d-0002a5d5c51b"))
-                    || effect.uuid.equals(UUID.fromString("e6c98a16-22a3-11e2-b87b-f23c91aec05e"))
-                    || effect.uuid.equals(UUID.fromString("d3467faa-acc7-4d34-acaf-0002a5d5c51b"))) {
+                        || effect.uuid.equals(UUID.fromString("e6c98a16-22a3-11e2-b87b-f23c91aec05e"))
+                        || effect.uuid.equals(UUID.fromString("d3467faa-acc7-4d34-acaf-0002a5d5c51b"))) {
                     mVirtualizerIsHeadphoneOnly = true;
                     Log.d(TAG, effect.name.toString() + ", mVirtualizerIsHeadphoneOnly = " + mVirtualizerIsHeadphoneOnly);
                 }
@@ -269,9 +243,9 @@ public class ActivityMusic extends AppCompatActivity {
         }
         mSWStrengthNames = getResources().getStringArray(R.array.stereowide_modes);
 
-        mCurrentLevelText = (TextView)findViewById(R.id.switchstatus);
-        mCurrentLevelText.setCompoundDrawableTintList(new ColorStateList(new int[][] { new int[0] },
-                new int[] { getResources().getColor(R.color.current_out_source_color) }));
+        mCurrentLevelText = (TextView) findViewById(R.id.switchstatus);
+        mCurrentLevelText.setCompoundDrawableTintList(new ColorStateList(new int[][]{new int[0]},
+                new int[]{getResources().getColor(R.color.current_out_source_color)}));
 
         // Watch for button clicks and initialization.
         if (mVirtualizerSupported || mBassBoostSupported || mEqualizerSupported
@@ -287,7 +261,7 @@ public class ActivityMusic extends AppCompatActivity {
                     // effect parameter.
                     @Override
                     public void onValueChanged(final Knob knob, final int value,
-                        final boolean fromUser) {
+                                               final boolean fromUser) {
                         // set parameter and state
                         ControlPanelEffect.setParameterInt(mContext, mCurrentLevel,
                                 ControlPanelEffect.Key.virt_strength, value);
@@ -318,14 +292,14 @@ public class ActivityMusic extends AppCompatActivity {
 
                     @Override
                     public void onValueChanged(final Knob knob, final int value,
-                            final boolean fromUser) {
+                                               final boolean fromUser) {
                         // set parameter and state
                         ControlPanelEffect.setParameterInt(mContext, mCurrentLevel,
                                 ControlPanelEffect.Key.bb_strength, value);
                     }
 
                     @Override
-                    public boolean onSwitchChanged(final Knob knob,boolean on) {
+                    public boolean onSwitchChanged(final Knob knob, boolean on) {
                         ControlPanelEffect.setParameterBoolean(mContext, mCurrentLevel,
                                 ControlPanelEffect.Key.bb_enabled, on);
                         return true;
@@ -342,7 +316,7 @@ public class ActivityMusic extends AppCompatActivity {
                     mEQPreset = 0;
                 }
                 mEQPresetPrevious = mEQPreset;
-                equalizerBandsInit((LinearLayout)findViewById(R.id.eqcontainer));
+                equalizerBandsInit((LinearLayout) findViewById(R.id.eqcontainer));
                 equalizerPresetsInit();
             }
 
@@ -357,7 +331,7 @@ public class ActivityMusic extends AppCompatActivity {
             }
 
             View spSpinnerContainer = findViewById(R.id.swSpinnerContainer);
-            mSWStrengthSpinner = (Spinner)findViewById(R.id.swSpinner);
+            mSWStrengthSpinner = (Spinner) findViewById(R.id.swSpinner);
             if (mStereoWideSupported) {
                 mSWStrength = ControlPanelEffect.getParameterInt(mContext, mCurrentLevel,
                         ControlPanelEffect.Key.sw_strength);
@@ -442,22 +416,22 @@ public class ActivityMusic extends AppCompatActivity {
     private void updateCurrentLevelInfo(String level) {
         String current = getResources().getString(R.string.current_output);
         if (level == ControlPanelEffect.SPEAKER_PREF_SCOPE) {
-            mCurrentLevelText.setText(current  + " " + getResources().getString(R.string.drawer_item_speaker));
+            mCurrentLevelText.setText(current + " " + getResources().getString(R.string.drawer_item_speaker));
         } else if (level == ControlPanelEffect.HEADSET_PREF_SCOPE) {
-            mCurrentLevelText.setText(current  + " " + getResources().getString(R.string.drawer_item_headset));
+            mCurrentLevelText.setText(current + " " + getResources().getString(R.string.drawer_item_headset));
         } else if (level == ControlPanelEffect.BLUETOOTH_PREF_SCOPE) {
-            mCurrentLevelText.setText(current  + " " + getResources().getString(R.string.drawer_item_bluetooth));
+            mCurrentLevelText.setText(current + " " + getResources().getString(R.string.drawer_item_bluetooth));
         }
     }
 
     private final String localizePresetName(final String name) {
         final String[] names = {
-            "Normal", "Classical", "Dance", "Flat", "Folk",
-            "Heavy Metal", "Hip Hop", "Jazz", "Pop", "Rock"
+                "Normal", "Classical", "Dance", "Flat", "Folk",
+                "Heavy Metal", "Hip Hop", "Jazz", "Pop", "Rock"
         };
         final int[] ids = {
-            R.string.normal, R.string.classical, R.string.dance, R.string.flat, R.string.folk,
-            R.string.heavy_metal, R.string.hip_hop, R.string.jazz, R.string.pop, R.string.rock
+                R.string.normal, R.string.classical, R.string.dance, R.string.flat, R.string.folk,
+                R.string.heavy_metal, R.string.hip_hop, R.string.jazz, R.string.pop, R.string.rock
         };
 
         for (int i = names.length - 1; i >= 0; --i) {
@@ -737,7 +711,7 @@ public class ActivityMusic extends AppCompatActivity {
         }
         if (mEqualizerSupported) {
             mEQPreset = ControlPanelEffect.getParameterInt(mContext, mCurrentLevel,
-                ControlPanelEffect.Key.eq_current_preset);
+                    ControlPanelEffect.Key.eq_current_preset);
             if (mEQPreset >= mEQPresetNames.length) {
                 mEQPreset = 0;
             }
@@ -766,7 +740,7 @@ public class ActivityMusic extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     final Toast toast = Toast.makeText(mContext,
-                        getString(R.string.power_on_prompt), Toast.LENGTH_SHORT);
+                            getString(R.string.power_on_prompt), Toast.LENGTH_SHORT);
                     toast.setGravity(Gravity.CENTER, 0, 0);
                     toast.show();
                 }
@@ -814,7 +788,7 @@ public class ActivityMusic extends AppCompatActivity {
         final OnSeekBarChangeListener listener = new OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(final Visualizer v, final int progress,
-                    final boolean fromUser) {
+                                          final boolean fromUser) {
                 for (short band = 0; band < mNumberEqualizerBands; ++band) {
                     if (mEqualizerVisualizer[band] == v) {
                         final short level = (short) (progress + mEqualizerMinBandLevel);
@@ -916,10 +890,8 @@ public class ActivityMusic extends AppCompatActivity {
     /**
      * Updates/sets a given EQ band level.
      *
-     * @param band
-     *            Band id
-     * @param level
-     *            EQ band level
+     * @param band  Band id
+     * @param level EQ band level
      */
     private void equalizerBandUpdate(final int band, final int level) {
         ControlPanelEffect.setParameterInt(mContext, mCurrentLevel,
@@ -929,8 +901,7 @@ public class ActivityMusic extends AppCompatActivity {
     /**
      * Sets the given EQ preset.
      *
-     * @param preset
-     *            EQ preset id.
+     * @param preset EQ preset id.
      */
     private void equalizerSetPreset(final int preset) {
         ControlPanelEffect.setParameterInt(mContext, mCurrentLevel,
@@ -940,8 +911,7 @@ public class ActivityMusic extends AppCompatActivity {
     /**
      * Sets the given PR preset.
      *
-     * @param preset
-     *            PR preset id.
+     * @param preset PR preset id.
      */
     private void presetReverbSetPreset(final int preset) {
         ControlPanelEffect.setParameterInt(mContext, mCurrentLevel,

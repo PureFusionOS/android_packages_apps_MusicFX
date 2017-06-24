@@ -34,55 +34,39 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.util.Log;
 
 import com.android.musicfx.R;
 import com.android.musicfx.seekbar.SeekBar;
 
 public class Visualizer extends LinearLayout {
-    public interface OnSeekBarChangeListener {
-        void onProgressChanged(Visualizer visualizer, int progress, boolean fromUser);
-        void onStartTrackingTouch(Visualizer visualizer);
-        void onStopTrackingTouch(Visualizer visualizer);
-    }
-
+    private final static String TAG = "Visualizer-JAVA";
     private final int MAX_TILES = 17;
     private final float SPACE_RATIO = 1.0f;
     private final float HORIZONTAL_PADDING = 0.138f;
     private final int VERTICAL_PADDING = 20;
-    private final static String TAG = "Visualizer-JAVA";
-
     private final TextView mTV;
     private final SeekBar mSB;
-    private OnSeekBarChangeListener mOnSeekBarChangeListener;
-
-    private boolean mEnabled;
-    private boolean mShowSeekBar = false;
-    private int mMax;
-    private int mProgress;
-
-    private int mWidth;
-    private float mHeight;
-    private float mTileWidth;
-    private float mBaseHeight;
     private final float mTVHeight;
     private final float mTextBottom;
     private final float mTileBottom;
     private final float mLeftMargin;
-
+    private final Paint mPaint;
+    private OnSeekBarChangeListener mOnSeekBarChangeListener;
+    private boolean mEnabled;
+    private boolean mShowSeekBar = false;
+    private int mMax;
+    private int mProgress;
+    private int mWidth;
+    private float mHeight;
+    private float mTileWidth;
+    private float mBaseHeight;
     private int mHighlightColor;
     private int mLowlightColor;
     private int mDisabledColor;
-    private final Paint mPaint;
-
     public Visualizer(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
 
@@ -106,7 +90,7 @@ public class Visualizer extends LinearLayout {
         mSB.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(final SeekBar seekbar, final int progress,
-                final boolean fromUser) {
+                                          final boolean fromUser) {
                 if (mOnSeekBarChangeListener != null) {
                     mOnSeekBarChangeListener.onProgressChanged(v, progress, fromUser);
                 }
@@ -185,17 +169,17 @@ public class Visualizer extends LinearLayout {
     }
 
     @Override
+    public boolean isEnabled() {
+        return mEnabled;
+    }
+
+    @Override
     public void setEnabled(boolean enabled) {
         mEnabled = enabled;
         if (!enabled) {
             setShowSeekBar(false);
         }
         invalidate();
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return mEnabled;
     }
 
     public void setText(final String text) {
@@ -225,5 +209,13 @@ public class Visualizer extends LinearLayout {
             mSB.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
             invalidate();
         }
+    }
+
+    public interface OnSeekBarChangeListener {
+        void onProgressChanged(Visualizer visualizer, int progress, boolean fromUser);
+
+        void onStartTrackingTouch(Visualizer visualizer);
+
+        void onStopTrackingTouch(Visualizer visualizer);
     }
 }

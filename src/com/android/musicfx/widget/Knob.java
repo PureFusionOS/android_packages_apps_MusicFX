@@ -32,7 +32,6 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.AttributeSet;
@@ -42,10 +41,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import java.lang.Math;
-import android.util.Log;
 
 import com.android.musicfx.R;
 
@@ -58,36 +54,23 @@ public class Knob extends FrameLayout {
     private static final float LABEL_WIDTH = 0.80f;
     private static final float INDICATOR_RADIUS = 0.38f;
     private final static String TAG = "Knob";
-
-    public interface OnKnobChangeListener {
-        void onValueChanged(Knob knob, int value, boolean fromUser);
-        boolean onSwitchChanged(Knob knob, boolean on);
-    }
-
+    private final Paint mPaint;
+    private final TextView mProgressTV;
+    private final ImageView mKnobOn;
+    private final ImageView mKnobOff;
     private OnKnobChangeListener mOnKnobChangeListener = null;
     private float mProgress = 0.0f;
     private int mMax = 100;
     private boolean mOn = false;
     private boolean mEnabled = false;
     private boolean mBinary = false;
-
     private int mLowlightColor;
     private int mDisabledColor;
-
-    private final Paint mPaint;
-
-    private final TextView mProgressTV;
-
-    private final ImageView mKnobOn;
-    private final ImageView mKnobOff;
-
     private float mLastX;
     private float mLastY;
     private boolean mMoved;
-
     private int mWidth = 0;
     private int mIndicatorWidth = 0;
-
     private RectF mRectF;
 
     public Knob(Context context, AttributeSet attrs, int defStyle) {
@@ -115,7 +98,7 @@ public class Knob extends FrameLayout {
         ((ImageView) findViewById(R.id.knob_foreground)).setImageResource(R.drawable.knob);
         mProgressTV = (TextView) findViewById(R.id.knob_value);
         int mKnobTextSize = getResources().getDimensionPixelSize(R.dimen.knob_text_size);
-        if(mProgressTV != null ){
+        if (mProgressTV != null) {
             mProgressTV.setTextSize(TypedValue.COMPLEX_UNIT_PX, mKnobTextSize);
         }
 
@@ -147,10 +130,6 @@ public class Knob extends FrameLayout {
         if (mMax != 0) {
             setProgress(((float) value) / mMax);
         }
-    }
-
-    public void setProgress(float progress) {
-        setProgress(progress, false);
     }
 
     private void setProgressText(boolean on) {
@@ -187,6 +166,10 @@ public class Knob extends FrameLayout {
 
     public float getProgress() {
         return mProgress;
+    }
+
+    public void setProgress(float progress) {
+        setProgress(progress, false);
     }
 
     private void drawIndicator() {
@@ -239,6 +222,7 @@ public class Knob extends FrameLayout {
         super.onDraw(canvas);
         drawIndicator();
     }
+
     @Override
     protected void dispatchDraw(Canvas canvas) {
         super.dispatchDraw(canvas);
@@ -343,5 +327,11 @@ public class Knob extends FrameLayout {
             angle += 270;
         }
         return angle;
+    }
+
+    public interface OnKnobChangeListener {
+        void onValueChanged(Knob knob, int value, boolean fromUser);
+
+        boolean onSwitchChanged(Knob knob, boolean on);
     }
 }

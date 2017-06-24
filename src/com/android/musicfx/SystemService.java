@@ -10,11 +10,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- package com.android.musicfx;
+package com.android.musicfx;
 
 import android.app.Service;
-import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothA2dp;
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothProfile;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -28,14 +28,7 @@ import android.util.Log;
 
 public class SystemService extends Service {
     private final static String TAG = "MusicFXSystemService";
-
-    public class LocalBinder extends Binder {
-        public SystemService getService() {
-            return SystemService.this;
-        }
-    }
     private final LocalBinder mBinder = new LocalBinder();
-
     private final BroadcastReceiver mAudioSessionReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -69,7 +62,6 @@ public class SystemService extends Service {
             }
         }
     };
-
     private final BroadcastReceiver mRoutingReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(final Context context, final Intent intent) {
@@ -85,7 +77,6 @@ public class SystemService extends Service {
             }
         }
     };
-
     private final BroadcastReceiver mBtReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(final Context context, final Intent intent) {
@@ -96,7 +87,7 @@ public class SystemService extends Service {
             boolean useBluetooth = prevUseBluetooth;
             if (action.equals(BluetoothA2dp.ACTION_CONNECTION_STATE_CHANGED)) {
                 int state = intent.getIntExtra(BluetoothProfile.EXTRA_STATE,
-                    BluetoothProfile.STATE_CONNECTED);
+                        BluetoothProfile.STATE_CONNECTED);
 
                 if (state == BluetoothProfile.STATE_CONNECTED && !prevUseBluetooth) {
                     useBluetooth = true;
@@ -174,5 +165,11 @@ public class SystemService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return mBinder;
+    }
+
+    public class LocalBinder extends Binder {
+        public SystemService getService() {
+            return SystemService.this;
+        }
     }
 }

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 Copyright (c) 2013-2014,2016, The Linux Foundation. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,32 +27,33 @@ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
 IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="48dp"
     android:layout_height="match_parent"
-    android:gravity="bottom|center_horizontal">
+    android:gravity="bottom|center_horizontal"
+    android:orientation="vertical">
 
     <com.android.musicfx.seekbar.SeekBar
         android:id="@+id/EQBandSeekBar"
         style="@style/Widget.Material.SeekBar.Vertical"
-        android:layout_marginStart="@dimen/eq_slider_margin"
-        android:layout_marginEnd="@dimen/eq_slider_margin"
         android:layout_width="48dp"
         android:layout_height="0dp"
+        android:layout_marginEnd="@dimen/eq_slider_margin"
+        android:layout_marginStart="@dimen/eq_slider_margin"
         android:layout_weight="1"
         android:visibility="invisible" />
+
     <Space
         android:layout_width="match_parent"
-        android:layout_height="10dp"/>
+        android:layout_height="10dp" />
+
     <TextView
         android:id="@+id/EQBandTextView"
         android:layout_width="match_parent"
         android:layout_height="@dimen/eq_text_height"
         android:layout_gravity="bottom"
-        android:gravity="center"
         android:alpha="0.54"
+        android:gravity="center"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="@color/textColor" />
 </LinearLayout>

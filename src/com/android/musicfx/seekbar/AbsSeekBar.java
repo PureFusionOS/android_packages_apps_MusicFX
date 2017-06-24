@@ -25,34 +25,29 @@ import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
-import android.util.Log;
 
 public abstract class AbsSeekBar extends ProgressBar {
-    private Drawable mThumb;
-    private int mThumbOffset;
     private final static String TAG = "AbsSeekBar-JAVA";
-    
+    private static final int NO_ALPHA = 0xFF;
     /**
      * On touch, this offset plus the scaled value from the position of the
      * touch will form the progress value. Usually 0.
      */
     float mTouchProgressOffset;
-
     /**
      * Whether this is user seekable.
      */
     boolean mIsUserSeekable = true;
-
     boolean mIsVertical = false;
+    private Drawable mThumb;
+    private int mThumbOffset;
     /**
      * On key presses (right or left), the amount to increment/decrement the
      * progress.
      */
     private int mKeyProgressIncrement = 1;
-    
-    private static final int NO_ALPHA = 0xFF;
     private float mDisabledAlpha;
-    
+
     private int mScaledTouchSlop;
     private float mTouchDownX;
     private float mTouchDownY;
@@ -92,7 +87,7 @@ public abstract class AbsSeekBar extends ProgressBar {
      * <p>
      * If the thumb is a valid drawable (i.e. not null), half its width will be
      * used as the new thumb offset (@see #setThumbOffset(int)).
-     * 
+     *
      * @param thumb Drawable representing the thumb
      */
     public void setThumb(Drawable thumb) {
@@ -121,7 +116,7 @@ public abstract class AbsSeekBar extends ProgressBar {
             // If we're updating get the new states
             if (needUpdate &&
                     (thumb.getIntrinsicWidth() != mThumb.getIntrinsicWidth()
-                        || thumb.getIntrinsicHeight() != mThumb.getIntrinsicHeight())) {
+                            || thumb.getIntrinsicHeight() != mThumb.getIntrinsicHeight())) {
                 requestLayout();
             }
         }
@@ -148,7 +143,7 @@ public abstract class AbsSeekBar extends ProgressBar {
     /**
      * Sets the thumb offset that allows the thumb to extend out of the range of
      * the track.
-     * 
+     *
      * @param thumbOffset The offset amount in pixels.
      */
     public void setThumbOffset(int thumbOffset) {
@@ -157,28 +152,28 @@ public abstract class AbsSeekBar extends ProgressBar {
     }
 
     /**
+     * Returns the amount of progress changed via the arrow keys.
+     * <p>
+     * By default, this will be a value that is derived from the max progress.
+     *
+     * @return The amount to increment or decrement when the user presses the
+     * arrow keys. This will be positive.
+     */
+    public int getKeyProgressIncrement() {
+        return mKeyProgressIncrement;
+    }
+
+    /**
      * Sets the amount of progress changed via the arrow keys.
-     * 
+     *
      * @param increment The amount to increment or decrement when the user
-     *            presses the arrow keys.
+     *                  presses the arrow keys.
      */
     public void setKeyProgressIncrement(int increment) {
         //Log.d(TAG, "setKeyProgressIncrement mKeyProgressIncrement="+mKeyProgressIncrement+" increment="+increment);
         mKeyProgressIncrement = increment < 0 ? -increment : increment;
     }
 
-    /**
-     * Returns the amount of progress changed via the arrow keys.
-     * <p>
-     * By default, this will be a value that is derived from the max progress.
-     * 
-     * @return The amount to increment or decrement when the user presses the
-     *         arrow keys. This will be positive.
-     */
-    public int getKeyProgressIncrement() {
-        return mKeyProgressIncrement;
-    }
-    
     @Override
     public synchronized void setMax(int max) {
         super.setMax(max);
@@ -205,18 +200,18 @@ public abstract class AbsSeekBar extends ProgressBar {
     @Override
     protected void drawableStateChanged() {
         super.drawableStateChanged();
-        
+
         Drawable progressDrawable = getProgressDrawable();
         if (progressDrawable != null) {
             progressDrawable.setAlpha(isEnabled() ? NO_ALPHA : (int) (NO_ALPHA * mDisabledAlpha));
         }
-        
+
         if (mThumb != null && mThumb.isStateful()) {
             int[] state = getDrawableState();
             mThumb.setState(state);
         }
     }
-    
+
     @Override
     void onProgressRefresh(float scale, boolean fromUser) {
         super.onProgressRefresh(scale, fromUser);
@@ -231,8 +226,8 @@ public abstract class AbsSeekBar extends ProgressBar {
             invalidate();
         }
     }
-    
-    
+
+
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         updateThumbPos(w, h);
@@ -290,7 +285,7 @@ public abstract class AbsSeekBar extends ProgressBar {
                     // Canvas will be translated by the padding, so 0,0 is where we start drawing
                     d.setBounds(0, gapForCenteringTrack,
                             w - mPaddingRight - mPaddingLeft, h - mPaddingBottom - gapForCenteringTrack
-                            - mPaddingTop);
+                                    - mPaddingTop);
                 }
             } else {
                 if (d != null) {
@@ -355,14 +350,14 @@ public abstract class AbsSeekBar extends ProgressBar {
     }
 
     @Override
-    public int getThumbCenter(){
-        Rect rect= mThumb.getBounds();
-        return (rect.top+rect.bottom)/2;
+    public int getThumbCenter() {
+        Rect rect = mThumb.getBounds();
+        return (rect.top + rect.bottom) / 2;
     }
 
     @Override
-    public int getThumbTop(){
-        Rect rect= mThumb.getBounds();
+    public int getThumbTop() {
+        Rect rect = mThumb.getBounds();
         return rect.top;
     }
 
@@ -399,7 +394,7 @@ public abstract class AbsSeekBar extends ProgressBar {
         }
         dw += mPaddingLeft + mPaddingRight;
         dh += mPaddingTop + mPaddingBottom;
-        
+
         setMeasuredDimension(resolveSizeAndState(dw, widthMeasureSpec, 0),
                 resolveSizeAndState(dh, heightMeasureSpec, 0));
 
@@ -409,13 +404,13 @@ public abstract class AbsSeekBar extends ProgressBar {
             mIsVertical = true;
         }
     }
-    
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (!mIsUserSeekable || !isEnabled()) {
             return false;
         }
-        
+
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 if (isInScrollingContainer()) {
@@ -431,7 +426,7 @@ public abstract class AbsSeekBar extends ProgressBar {
                     attemptClaimDrag();
                 }
                 break;
-                
+
             case MotionEvent.ACTION_MOVE:
                 if (mIsDragging) {
                     trackTouchEvent(event);
@@ -450,7 +445,7 @@ public abstract class AbsSeekBar extends ProgressBar {
                     }
                 }
                 break;
-                
+
             case MotionEvent.ACTION_UP:
                 if (mIsDragging) {
                     trackTouchEvent(event);
@@ -468,7 +463,7 @@ public abstract class AbsSeekBar extends ProgressBar {
                 // value has not apparently changed)
                 invalidate();
                 break;
-                
+
             case MotionEvent.ACTION_CANCEL:
                 if (mIsDragging) {
                     onStopTrackingTouch();
@@ -485,14 +480,14 @@ public abstract class AbsSeekBar extends ProgressBar {
         if (mIsVertical) {
             final int height = getHeight();
             final int available = height - mPaddingTop - mPaddingBottom;
-            int y = (int)event.getY();
+            int y = (int) event.getY();
             float scale;
             if (y < mPaddingTop) {
                 scale = 1.0f;
             } else if (y > height - mPaddingBottom) {
                 scale = 0.0f;
             } else {
-                scale = 1.0f - (float)(y - mPaddingTop) / (float)available;
+                scale = 1.0f - (float) (y - mPaddingTop) / (float) available;
                 progress = mTouchProgressOffset;
             }
 
@@ -501,21 +496,21 @@ public abstract class AbsSeekBar extends ProgressBar {
         } else {
             final int width = getWidth();
             final int available = width - mPaddingLeft - mPaddingRight;
-            int x = (int)event.getX();
+            int x = (int) event.getX();
             float scale;
             if (x < mPaddingLeft) {
                 scale = 0.0f;
             } else if (x > width - mPaddingRight) {
                 scale = 1.0f;
             } else {
-                scale = (float)(x - mPaddingLeft) / (float)available;
+                scale = (float) (x - mPaddingLeft) / (float) available;
                 progress = mTouchProgressOffset;
             }
 
             final int max = getMax();
             progress += scale * max;
         }
-        
+
         setProgress((int) progress, true);
     }
 
@@ -528,7 +523,7 @@ public abstract class AbsSeekBar extends ProgressBar {
             mParent.requestDisallowInterceptTouchEvent(true);
         }
     }
-    
+
     /**
      * This is called when the user has started touching this widget.
      */

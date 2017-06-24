@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2010-2011 The Android Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (C) 2010-2011 The Android Open Source Project
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,19 +13,19 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    
+
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/menu_speaker"
-            android:title="@string/drawer_item_speaker"
-            android:icon="@drawable/ic_speaker" />
+            android:icon="@drawable/ic_speaker"
+            android:title="@string/drawer_item_speaker" />
         <item
             android:id="@+id/menu_headset"
-            android:title="@string/drawer_item_headset"
-            android:icon="@drawable/ic_headphones" />
+            android:icon="@drawable/ic_headphones"
+            android:title="@string/drawer_item_headset" />
         <item
             android:id="@+id/menu_bluetooth"
-            android:title="@string/drawer_item_bluetooth"
-            android:icon="@drawable/ic_bluetooth" />
+            android:icon="@drawable/ic_bluetooth"
+            android:title="@string/drawer_item_bluetooth" />
     </group>
 </menu>

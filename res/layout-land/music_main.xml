@@ -92,9 +92,9 @@
 
                     <include
                         layout="@layout/music_eq"
-                        android:layout_gravity="center_horizontal"
                         android:layout_width="wrap_content"
                         android:layout_height="0dip"
+                        android:layout_gravity="center_horizontal"
                         android:layout_weight="1" />
 
                     <com.android.musicfx.widget.Gallery
@@ -118,8 +118,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
-                        android:orientation="horizontal"
-                        android:background="@color/knobs_area_background" >
+                        android:background="@color/knobs_area_background"
+                        android:orientation="horizontal">
 
                         <LinearLayout
                             android:layout_width="0dp"
@@ -194,8 +194,8 @@
                             android:layout_weight="1"
                             android:text="@string/pr_title"
                             android:textAlignment="center"
-                            android:textStyle="bold"
-                            android:textColor="@color/textColor" />
+                            android:textColor="@color/textColor"
+                            android:textStyle="bold" />
 
                         <TextView
                             android:layout_width="0dp"
@@ -204,8 +204,8 @@
                             android:layout_weight="1"
                             android:text="@string/sw_title"
                             android:textAlignment="center"
-                            android:textStyle="bold"
-                            android:textColor="@color/textColor" />
+                            android:textColor="@color/textColor"
+                            android:textStyle="bold" />
 
                     </LinearLayout>
 
@@ -243,10 +243,10 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
+        android:background="@color/drawer_background_color"
         app:headerLayout="@layout/drawer_header"
         app:itemIconTint="@color/drawer_menu_icon_color"
         app:itemTextColor="@color/drawer_menu_text_color"
-        android:background="@color/drawer_background_color"
         app:menu="@menu/drawer_menu" />
 
 </android.support.v4.widget.DrawerLayout>

@@ -40,19 +40,12 @@ import android.widget.TextView;
 import com.android.musicfx.R;
 
 public class Gallery extends android.widget.Gallery {
-    public interface OnItemSelectedListener {
-        void onItemSelected(int position);
-    }
-
     private boolean mEnabled = false;
-
     private int mHighlightColor;
     private int mLowlightColor;
     private int mDisabledColor;
-
     private TextView mLastView = null;
     private OnItemSelectedListener mOnItemSelectedListener = null;
-
     public Gallery(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
 
@@ -123,5 +116,9 @@ public class Gallery extends android.widget.Gallery {
     @Override
     public boolean onDown(MotionEvent e) {
         return mEnabled && super.onDown(e);
+    }
+
+    public interface OnItemSelectedListener {
+        void onItemSelected(int position);
     }
 }

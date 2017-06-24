@@ -20,10 +20,6 @@ package com.android.audiofx;
  * OpenSL ES constants class
  */
 public final class OpenSLESConstants {
-    private OpenSLESConstants() {
-        // Empty constructor
-    }
-
     /**
      * Minimum volume level in millibel (mb).
      */
@@ -32,7 +28,6 @@ public final class OpenSLESConstants {
      * This value is used when equalizer setting is not defined.
      */
     public static final short SL_EQUALIZER_UNDEFINED = (short) 0xFFFF;
-
     /**
      * The minimum bass boost strength in o/oo.
      */
@@ -41,7 +36,6 @@ public final class OpenSLESConstants {
      * The maximum bass boost strength in o/oo.
      */
     public static final short BASSBOOST_MAX_STRENGTH = 1000;
-
     /**
      * The minimum reverb room level in mb.
      */
@@ -99,7 +93,6 @@ public final class OpenSLESConstants {
      * The maximum reverb density in o/oo.
      */
     public static final short REVERB_MAX_DENSITY = 1000;
-
     /**
      * The minimum virtualizer strength in o/oo.
      */
@@ -108,7 +101,6 @@ public final class OpenSLESConstants {
      * The maximum virtualizer strength in o/oo.
      */
     public static final short VIRTUALIZER_MAX_STRENGTH = 1000;
-
     /**
      * The minimum volume effect level in millibel (mb).
      */
@@ -121,4 +113,7 @@ public final class OpenSLESConstants {
      * The maximum volume stereo position in o/oo.
      */
     public static final short VOLUME_MAX_STEREO_POSITION = 1000;
+    private OpenSLESConstants() {
+        // Empty constructor
+    }
 }
