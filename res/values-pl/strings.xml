@@ -63,4 +63,9 @@
   <string name="stereowide_high">Wysoki</string>
   <string name="stereowide_none">Żaden</string>
   <string name="sw_title">Rozszerzenie stereo</string>
+  <!-- Presets -->
+  <string name="preset_menu">Ustawienia predefiniowane</string>
+  <string name="save_preset">Zapisz ustawienie</string>
+  <string name="load_preset">Wczytaj ustawienie</string>
+  <string name="new_preset">Nowe ustawienie...</string>
 </resources>

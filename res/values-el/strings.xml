@@ -48,4 +48,5 @@
   <string name="drawer_item_speaker">Ηχείο</string>
   <string name="stereowide_none">Κανένα</string>
   <string name="sw_title">Διευρυμένο Stereo</string>
+  <!-- Presets -->
 </resources>

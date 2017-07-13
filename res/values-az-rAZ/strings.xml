@@ -63,4 +63,9 @@
   <string name="stereowide_high">Yüksək</string>
   <string name="stereowide_none">Heç biri</string>
   <string name="sw_title">Stereo genişləndirici</string>
+  <!-- Presets -->
+  <string name="preset_menu">Hazırlanmışlar</string>
+  <string name="save_preset">Hazırlanmışları Saxla</string>
+  <string name="load_preset">Hazırlanmışları Yüklə</string>
+  <string name="new_preset">Yeni hazırlanmış...</string>
 </resources>

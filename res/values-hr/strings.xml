@@ -27,4 +27,5 @@
   <string name="user">Korisnik</string>
   <!-- title of control panel picker dialog [CHAR LIMIT=30] -->
   <string name="picker_title">Upravljačka ploča glazbenih efekata</string>
+  <!-- Presets -->
 </resources>

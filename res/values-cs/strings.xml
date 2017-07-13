@@ -63,4 +63,9 @@
   <string name="stereowide_high">Vysoké</string>
   <string name="stereowide_none">Nic</string>
   <string name="sw_title">Stereo rozšíření</string>
+  <!-- Presets -->
+  <string name="preset_menu">Předvolby</string>
+  <string name="save_preset">Uložit předvolbu</string>
+  <string name="load_preset">Načíst předvolbu</string>
+  <string name="new_preset">Nová předvolba...</string>
 </resources>

@@ -27,4 +27,5 @@
   <string name="user">Корисник</string>
   <!-- title of control panel picker dialog [CHAR LIMIT=30] -->
   <string name="picker_title">Контр. табла музичких ефеката</string>
+  <!-- Presets -->
 </resources>

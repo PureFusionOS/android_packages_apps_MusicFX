@@ -31,4 +31,5 @@
   <string name="user">Потребител</string>
   <!-- title of control panel picker dialog [CHAR LIMIT=30] -->
   <string name="picker_title">Муз. ефекти: Контролен панел</string>
+  <!-- Presets -->
 </resources>

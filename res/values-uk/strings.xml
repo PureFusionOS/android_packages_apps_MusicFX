@@ -36,4 +36,5 @@
   <string name="stereowide_moderate">Помірний</string>
   <string name="stereowide_high">Високий</string>
   <string name="sw_title">Розширення стерео</string>
+  <!-- Presets -->
 </resources>

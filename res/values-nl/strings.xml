@@ -63,4 +63,5 @@
   <string name="stereowide_high">Hoog</string>
   <string name="stereowide_none">Geen</string>
   <string name="sw_title">Stereo widener</string>
+  <!-- Presets -->
 </resources>

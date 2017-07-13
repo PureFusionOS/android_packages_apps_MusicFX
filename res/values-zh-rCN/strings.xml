@@ -63,4 +63,5 @@
   <string name="stereowide_high">高</string>
   <string name="stereowide_none">无</string>
   <string name="sw_title">立体声场增强</string>
+  <!-- Presets -->
 </resources>

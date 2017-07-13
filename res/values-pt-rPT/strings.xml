@@ -63,4 +63,5 @@
   <string name="stereowide_high">Alto</string>
   <string name="stereowide_none">Nenhum</string>
   <string name="sw_title">Amplificador stereo</string>
+  <!-- Presets -->
 </resources>

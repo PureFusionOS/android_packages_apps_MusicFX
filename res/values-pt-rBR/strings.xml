@@ -22,7 +22,7 @@
   <string name="eq_dialog_title">Equalizador</string>
   <string name="headset_plug">Conecte os fones de ouvido para esses efeitos.</string>
   <string name="combo_device">Efeitos suportados somente na reprodução de fones de ouvido.</string>
-  <string name="bass_boost_strength">Ganho de graves</string>
+  <string name="bass_boost_strength">Ganho de grave</string>
   <string name="virtualizer_strength">Som surround</string>
   <string name="pr_title">Reverberação</string>
   <string name="pr_summary">Efeitos adicionais de reverberação da sala</string>
@@ -63,4 +63,9 @@
   <string name="stereowide_high">Alta</string>
   <string name="stereowide_none">Nenhum</string>
   <string name="sw_title">Amplificar Stereo</string>
+  <!-- Presets -->
+  <string name="preset_menu">Predefinições</string>
+  <string name="save_preset">Salvar predefinição</string>
+  <string name="load_preset">Carregar predefinição</string>
+  <string name="new_preset">Nova predefinição...</string>
 </resources>
