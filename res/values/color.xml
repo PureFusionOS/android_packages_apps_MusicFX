@@ -45,5 +45,7 @@
     <color name="visualizer_highlight">@color/accentColor</color> <!-- equalizer active level bar top element  -->
     <color name="visualizer_lowlight">#ff8787</color> <!-- equalizer active level bar elements -->
     <color name="visualizer_disabled">@color/disabled</color> <!-- equalizer level bar when musicfx is off -->
-
+    <color name="spinner_disabled">#76777c</color>
+    <color name="spinner_reverb_list">@android:color/white</color>
+    <color name="toolbar_thumb_color">@color/accentColor</color>
 </resources>

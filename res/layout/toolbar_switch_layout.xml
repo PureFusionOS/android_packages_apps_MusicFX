@@ -23,5 +23,6 @@
          android:id="@+id/toolbar_switch_button"
          android:layout_width="wrap_content"
          android:layout_height="wrap_content"
-         android:layout_centerVertical="true"/>
+         android:layout_centerVertical="true"
+         android:theme="@style/ToolbarSwitchTheme" />
 </RelativeLayout>

@@ -184,6 +184,7 @@ public class ActivityMusic extends AppCompatActivity {
     private int mHighlightColor;
     private int mTextColor;
     private Runnable mDoAfterPermCheck;
+    private int mSpinoffColor;
 
     private static final int PERMISSION_REQUEST_STORAGE = 0;
 
@@ -274,6 +275,7 @@ public class ActivityMusic extends AppCompatActivity {
         mViewGroup = (ViewGroup) findViewById(R.id.contentSoundEffects);
         mHighlightColor = getResources().getColor(R.color.highlight_gallery_text);
         mTextColor = getResources().getColor(R.color.textColor);
+        mSpinoffColor = getResources().getColor(R.color.spinner_disabled);
 
         // Fill array with presets from AudioEffects call.
         // allocate a space for 1 extra strings (User)
@@ -597,8 +599,10 @@ public class ActivityMusic extends AppCompatActivity {
                 View item = super.getView(position, convertView, parent);
                 if (position == mPRPreset && position != 0 && mPRPresetSpinner.isEnabled()) {
                     ((TextView) item.findViewById(android.R.id.text1)).setTextColor(mHighlightColor);
-                } else {
+                } else if (mPRPresetSpinner.isEnabled()) {
                     ((TextView) item.findViewById(android.R.id.text1)).setTextColor(mTextColor);
+                } else {
+                    ((TextView) item.findViewById(android.R.id.text1)).setTextColor(mSpinoffColor);
                 }
                 return item;
             }
@@ -642,8 +646,10 @@ public class ActivityMusic extends AppCompatActivity {
                 View item = super.getView(position, convertView, parent);
                 if (position == mSWStrength && position != 0 && mSWStrengthSpinner.isEnabled()) {
                     ((TextView) item.findViewById(android.R.id.text1)).setTextColor(mHighlightColor);
-                } else {
+                } else if (mSWStrengthSpinner.isEnabled()) {
                     ((TextView) item.findViewById(android.R.id.text1)).setTextColor(mTextColor);
+                } else {
+                    ((TextView) item.findViewById(android.R.id.text1)).setTextColor(mSpinoffColor);
                 }
                 return item;
             }
