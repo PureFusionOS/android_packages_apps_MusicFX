@@ -35,6 +35,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.graphics.PorterDuff.Mode;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -120,6 +121,7 @@ public class Knob extends FrameLayout {
         }
 
         mKnobOn = (ImageView) findViewById(R.id.knob_toggle_on);
+        mKnobOn.setColorFilter(mLowlightColor, Mode.SRC_ATOP);
         mKnobOff = (ImageView) findViewById(R.id.knob_toggle_off);
 
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
