@@ -16,13 +16,15 @@
 
 package com.android.musicfx.seekbar;
 
-import com.android.internal.R;
-
+import android.annotation.Nullable;
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
+import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -54,6 +56,7 @@ import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.Transformation;
 import android.widget.RemoteViews.RemoteView;
+import com.android.internal.R;
 import android.util.Log;
 
 
@@ -213,6 +216,8 @@ public class ProgressBar extends View {
     private Drawable mIndeterminateDrawable;
     private Drawable mProgressDrawable;
     private Drawable mCurrentDrawable;
+    private ProgressTintInfo mProgressTintInfo;
+
     Bitmap mSampleTile;
     private boolean mNoInvalidate;
     private Interpolator mInterpolator;
@@ -224,6 +229,7 @@ public class ProgressBar extends View {
     private boolean mInDrawing;
 
     private int mAnimationResolution;
+
 
     private AccessibilityEventSender mAccessibilityEventSender;
 
@@ -303,7 +309,26 @@ public class ProgressBar extends View {
         mAnimationResolution = a.getInteger(R.styleable.ProgressBar_animationResolution,
                 ANIMATION_RESOLUTION);
 
+        if (a.hasValue(R.styleable.ProgressBar_progressTintMode)) {
+            if (mProgressTintInfo == null) {
+                mProgressTintInfo = new ProgressTintInfo();
+            }
+            mProgressTintInfo.mProgressTintMode = Drawable.parseTintMode(a.getInt(
+                    R.styleable.ProgressBar_progressTintMode, -1), null);
+            mProgressTintInfo.mHasProgressTintMode = true;
+        }
+
+        if (a.hasValue(R.styleable.ProgressBar_progressTint)) {
+            if (mProgressTintInfo == null) {
+                mProgressTintInfo = new ProgressTintInfo();
+            }
+            mProgressTintInfo.mProgressTintList = a.getColorStateList(
+                    R.styleable.ProgressBar_progressTint);
+            mProgressTintInfo.mHasProgressTint = true;
+        }
         a.recycle();
+
+        applyProgressTints();
     }
 
     /**
@@ -522,6 +547,7 @@ public class ProgressBar extends View {
                 mMaxHeight = drawableHeight;
                 requestLayout();
             }
+            applyProgressTints();
         }
         mProgressDrawable = d;
         if (!mIndeterminate) {
@@ -536,7 +562,69 @@ public class ProgressBar extends View {
             doRefreshProgress(R.id.secondaryProgress, mSecondaryProgress, false, false);
         }
     }
-    
+
+    /**
+     * Applies the progress tints in order of increasing specificity.
+     */
+    private void applyProgressTints() {
+        if (mProgressDrawable != null && mProgressTintInfo != null) {
+            applyPrimaryProgressTint();
+        }
+    }
+
+    /**
+     * Should only be called if we've already verified that mProgressDrawable
+     * and mProgressTintInfo are non-null.
+     */
+    private void applyPrimaryProgressTint() {
+        if (mProgressTintInfo.mHasProgressTint
+                || mProgressTintInfo.mHasProgressTintMode) {
+            final Drawable target = getTintTarget(R.id.progress, true);
+            if (target != null) {
+                if (mProgressTintInfo.mHasProgressTint) {
+                    target.setTintList(mProgressTintInfo.mProgressTintList);
+                }
+                if (mProgressTintInfo.mHasProgressTintMode) {
+                    target.setTintMode(mProgressTintInfo.mProgressTintMode);
+                }
+
+                // The drawable (or one of its children) may not have been
+                // stateful before applying the tint, so let's try again.
+                if (target.isStateful()) {
+                    target.setState(getDrawableState());
+                }
+            }
+        }
+    }
+
+    /**
+     * Returns the drawable to which a tint or tint mode should be applied.
+     *
+     * @param layerId id of the layer to modify
+     * @param shouldFallback whether the base drawable should be returned
+     *                       if the id does not exist
+     * @return the drawable to modify
+     */
+    @Nullable
+    private Drawable getTintTarget(int layerId, boolean shouldFallback) {
+        Drawable layer = null;
+
+        final Drawable d = mProgressDrawable;
+        if (d != null) {
+            mProgressDrawable = d.mutate();
+
+            if (d instanceof LayerDrawable) {
+                layer = ((LayerDrawable) d).findDrawableByLayerId(layerId);
+            }
+
+            if (shouldFallback && layer == null) {
+                layer = d;
+            }
+        }
+
+        return layer;
+    }
+
     /**
      * @return The drawable currently used to draw the progress bar
      */
@@ -1164,5 +1252,12 @@ public class ProgressBar extends View {
         public void run() {
             sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_SELECTED);
         }
+    }
+
+    private static class ProgressTintInfo {
+        ColorStateList mProgressTintList;
+        PorterDuff.Mode mProgressTintMode;
+        boolean mHasProgressTint;
+        boolean mHasProgressTintMode;
     }
 }

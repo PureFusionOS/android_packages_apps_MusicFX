@@ -18,7 +18,6 @@
     <style name="Widget.Material.SeekBar.Vertical" parent="@android:Widget.Material.SeekBar">
         <item name="android:indeterminateOnly">false</item>
         <item name="android:progressDrawable">@drawable/scrubber_progress_vertical_holo_dark</item>
-<!-- not public       <item name="android:indeterminateDrawable">@android:drawable/scrubber_progress_horizontal_holo_dark</item> -->
         <item name="android:minWidth">33dip</item>
         <item name="android:maxWidth">33dip</item>
         <item name="android:thumb">@drawable/button</item>
@@ -29,6 +28,8 @@
         <item name="android:paddingRight">0dip</item>
         <item name="android:paddingTop">5dip</item>
         <item name="android:paddingBottom">0dip</item>
+        <item name="android:progressTint">@color/accentColor</item>
+        <item name="android:progressTintMode">src_over</item>
     </style>
 
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
