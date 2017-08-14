@@ -123,6 +123,7 @@ public class Knob extends FrameLayout {
         mKnobOn = (ImageView) findViewById(R.id.knob_toggle_on);
         mKnobOn.setColorFilter(mLowlightColor, Mode.SRC_ATOP);
         mKnobOff = (ImageView) findViewById(R.id.knob_toggle_off);
+        mKnobOff.setColorFilter(mDisabledColor, Mode.SRC_ATOP);
 
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mPaint.setColor(mLowlightColor);
