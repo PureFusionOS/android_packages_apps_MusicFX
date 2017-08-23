@@ -262,8 +262,8 @@ public class ActivityMusic extends AppCompatActivity {
                 mEqualizerSupported = true;
             } else if (effect.type.equals(AudioEffect.EFFECT_TYPE_PRESET_REVERB)) {
                 mPresetReverbSupported = true;
-            } else if (effect.type.equals(AudioEffect.EFFECT_TYPE_STEREOWIDE)) {
-                mStereoWideSupported = true;
+            /*} else if (effect.type.equals(AudioEffect.EFFECT_TYPE_STEREOWIDE)) {
+                mStereoWideSupported = true;*/
             }
         }
 
