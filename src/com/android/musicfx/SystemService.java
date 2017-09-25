@@ -169,6 +169,7 @@ public class SystemService extends Service {
 
         unregisterReceiver(mAudioSessionReceiver);
         unregisterReceiver(mRoutingReceiver);
+        unregisterReceiver(mBtReceiver);
     }
 
     @Override
